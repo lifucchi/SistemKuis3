@@ -22,12 +22,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = CustomUserManager()
 
-    # def get_unanswered_questions(self, quiz):
-    #     answered_questions = self.murid \
-    #         .filter(quiz_answers__question__specific_Competency=quiz) \
-    #         .values_list('quiz_answers__question__id', flat=True)
-    #     questions = quiz.indikator.exclude(pk__in=answered_questions).order_by('?')
-    #     return questions
+    def get_unanswered_questions(self, quiz):
+        answered_questions = self.murid \
+            .filter(quiz_answers__question__specific_Competency=quiz) \
+            .values_list('quiz_answers__question__id', flat=True)
+        questions = quiz.indikator.exclude(pk__in=answered_questions).order_by('?')
+        return questions
 
 
     def __str__(self):

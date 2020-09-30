@@ -79,7 +79,7 @@ class Question(models.Model):
     label = models.CharField(max_length=200)
     level_a = models.FloatField(default=0)
     discrimination_b = models.FloatField(default=0)
-    c_prob = models.FloatField(default=0)
+    # c_prob = models.FloatField(default=0)
     order = models.IntegerField(default=0)
 
     def __str__(self):

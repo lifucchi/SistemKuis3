@@ -18,10 +18,10 @@ class QuestionInline(nested_admin.NestedTabularInline):
     extra = 5
 
 
-class IndikatorInline(nested_admin.NestedTabularInline):
-    model = Specific_Competency
-    inlines = [QuestionInline,]
-    extra = 5
+# class IndikatorInline(nested_admin.NestedTabularInline):
+#     model = Specific_Competency
+#     inlines = [QuestionInline,]
+#     extra = 5
 
 
 # class Question_DetailInLine(nested_admin.NestedTabularInline):
@@ -36,6 +36,10 @@ class IndikatorInline(nested_admin.NestedTabularInline):
 
 class QuizAdmin(nested_admin.NestedModelAdmin):
     inlines = [QuestionInline,]
+
+#
+# class QuestionAdmin(admin.ModelAdmin):
+#     inlines = [QuestionInline,]
 
 
 class UsersAnswerInline(admin.TabularInline):
@@ -58,7 +62,7 @@ admin.site.register(Specific_Competency, QuizAdmin)
 admin.site.register(Core_Competency)
 admin.site.register(Base_Competency)
 admin.site.register(Topic)
-# admin.site.register(Question)
+admin.site.register(Question)
 admin.site.register(Answer)
 admin.site.register(QuizTaker, QuizTakerAdmin)
 admin.site.register(UsersAnswer)
