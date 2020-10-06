@@ -38,10 +38,13 @@ def topicDetail (request, slug):
 
 @login_required
 def take_quiz(request, pk):
-
-    quiz = get_object_or_404(Specific_Competency, pk=pk)
     student = request.user
-    obj = QuizTaker.objects.create(user=student, specific_competency=quiz)
+
+    quiz = Specific_Competency.objects.filter(base_Competency_id=pk).first()
+    # quiz = get_object_or_404(Specific_Competency,  base_Competency_id=pk).first()
+    # panjang = len(quiz)
+    # print(panjang)
+    obj = QuizTaker.objects.create(user = student, specific_competency=quiz)
     quiz_taker = obj.pk
 
     if student.get_unanswered_questions(quiz).exists():
@@ -57,28 +60,6 @@ def take_quiz(request, pk):
         question = quiz.indikator.order_by('?')
         question = question.first()
         return redirect('question' , quiz = quiz.pk, quiz_taker = quiz_taker, question_id=question.id)
-
-    # quiz = Quiz.objects.get(pk=quiz_id)
-    # just get first question in quiz for now
-    # question = Question.objects.get(pk=question_id)
-    # unanswered_questions = student.get_unanswered_questions(quiz)
-    # question = unanswered_questions.first()
-    # answers = question.choices.all().order_by('label')
-
-    # could simulate web service request to get: questions, answers
-    # question_data = requests.get(reverse('adaptive_engine:get_question'),params={'id':question.id})
-    # question_text = question_data['text']
-
-    # alternative: get objects directly
-    # choose_answer_form = ChooseAnswerForm()
-    # choose_answer_form.fields['answer'].queryset = answers
-    #
-    # context = {
-    #     'question': question,
-    #     'form': choose_answer_form,
-    # }
-    #
-    # return render(request, 'quiz/take_quiz_form.php', context)
 
 def question(request,quiz,quiz_taker,question_id):
     student = QuizTaker.objects.get(pk=quiz_taker)
@@ -155,83 +136,3 @@ def question(request,quiz,quiz_taker,question_id):
                     question = question.first()
 
                 return redirect('question', quiz=quiz.pk, quiz_taker=student.pk, question_id=question.id)
-
-            # return render(request, 'quiz/take_quiz_form.php', context)
-
-            # question =
-            #
-            # context = {
-            #     'question': question,
-            #     'form': choose_answer_form,
-            #     # 'quiztaker' : student
-            #
-            # }
-            #
-            # return render(request, 'quiz/take_quiz_form.php', context)
-
-            #sepertinya fuzzynya disini terus bikin question lagi
-
-    # quiz = get_object_or_404(Specific_Competency, pk=pk)
-    # student = request.user
-    #
-    # total_questions = quiz.indikator.count()
-    #
-    # unanswered_questions = student.get_unanswered_questions(quiz)
-    # total_unanswered_questions = unanswered_questions.count()
-    # progress = 100 - round(((total_unanswered_questions - 1) / total_questions) * 100)
-    # question = unanswered_questions.first()
-    #
-    # if request.method == 'POST':
-    #     # form = TakeQuizForm(question=question, data=request.POST)
-    #     form = TakeQuizForm(question=question, data=request.POST)
-    #
-    #     if form.is_valid():
-    #         with transaction.atomic():
-    #             student_answer = form.save(commit=False)
-    #             quiz_taker = get_object_or_404(QuizTaker, pk=student.id)
-    #
-    #             student_answer.quiztaker  = quiz_taker.pk
-    #             student_answer.question = question.pk
-    #             student_answer.save()
-    #
-    #             # return redirect('topic')
-    #
-    # else:
-    #     # QuizTaker.objects.create(user=student, specific_competency=quiz)
-    #     # obj = QuizTaker.objects.get_or_create(user = student, specific_competency = quiz)
-    #     # UsersAnswer.objects.create(quiztaker = obj, question = question)?
-    #     form = TakeQuizForm(question=question)
-    #     # total_questions = quiz.indikator.count()
-    #
-    # return render(request, 'quiz/take_quiz_form.php', {
-    #     'quiz': quiz,
-    #     'question': question,
-    #     'form': form,
-    #     'progress': progress,
-    #     'answered_questions': total_questions - total_unanswered_questions,
-    #     'total_questions': total_questions
-    # })
-
-
-
-
-# Create your views here.
-# class topicList(ListView):
-#     model = Specific_Competency
-#     ordering = ('name', )
-#     context_object_name = 'indikator'
-#     template_name = 'classroom/students/quiz_list.html'
-#
-#     def get_queryset(self):
-#         student = self.request.user.student
-#         # student_interests = student.interests.values_list('pk', flat=True)
-#         taken_quizzes = student.quizzes.values_list('pk', flat=True)
-#         queryset = Quiz.objects.exclude(pk__in=taken_quizzes) \
-#             .annotate(questions_count=Count('questions')) \
-#             .filter(questions_count__gt=0)
-#         return queryset
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['student_subjects'] = self.request.user.student.interests.values_list('pk', flat=True)
-#         return context
