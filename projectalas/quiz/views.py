@@ -27,7 +27,7 @@ class topicList (ListView):
         queryset = super(topicList, self).get_queryset()
         return queryset
 
-@login_required()
+
 def topicDetail (request, slug):
     topic = get_object_or_404(Topic, slug=slug)
     bc = Base_Competency.objects.filter(topic=topic)
