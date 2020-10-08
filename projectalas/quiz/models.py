@@ -77,7 +77,7 @@ class Question(models.Model):
     # specific_Competency = models.ManyToManyField(Specific_Competency, through= question)
     specific_Competency = models.ForeignKey(Specific_Competency, on_delete=models.CASCADE, related_name="indikator")
     label = models.CharField(max_length=200)
-    level = models.FloatField(default=0 )
+    level = models.FloatField(default=0)
     discrimination = models.FloatField(default=0)
     # c_prob = models.FloatField(default=0)
     order = models.IntegerField(default=0)

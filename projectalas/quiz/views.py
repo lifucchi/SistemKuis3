@@ -1,7 +1,4 @@
 from django.shortcuts import render
-
-# Create your views here.
-from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.http import  HttpResponse , request , response
@@ -14,7 +11,7 @@ from django.shortcuts import get_object_or_404
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.serializers import serialize
 from django.db import transaction
-
+from django.contrib import messages
 from .forms import ChooseAnswerForm
 
 class topicList (ListView):
@@ -27,7 +24,7 @@ class topicList (ListView):
         queryset = super(topicList, self).get_queryset()
         return queryset
 
-
+@login_required()
 def topicDetail (request, slug):
     topic = get_object_or_404(Topic, slug=slug)
     bc = Base_Competency.objects.filter(topic=topic)
@@ -39,27 +36,20 @@ def topicDetail (request, slug):
 @login_required
 def take_quiz(request, pk):
     student = request.user
-
-    quiz = Specific_Competency.objects.filter(base_Competency_id=pk).first()
-    # quiz = get_object_or_404(Specific_Competency,  base_Competency_id=pk).first()
-    # panjang = len(quiz)
-    # print(panjang)
-    obj = QuizTaker.objects.create(user = student, specific_competency=quiz)
-    quiz_taker = obj.pk
-
-    if student.get_unanswered_questions(quiz).exists():
-        unanswered_questions = student.get_unanswered_questions(quiz)
-        question = unanswered_questions.filter(level__lte = 0.7)
-        question = question.filter(level__gte = 0.3)
+    # messages.success(request, ('masuk'))
+    try:
+        quiz = Specific_Competency.objects.filter(base_Competency_id=pk).first()
+        obj = QuizTaker.objects.create(user=student, specific_competency=quiz)
+        quiz_taker = obj.pk
+        question = quiz.indikator.filter(level__lte = 0.7)
+        question = question.filter(level__gte=0.3)
         question = question.first()
+        return redirect('question', quiz=quiz.pk, quiz_taker=quiz_taker, question_id=question.id)
 
-        # return redirect('question', question_id=question.id )
-        # return redirect('question', question_id=question.id)
-        return redirect('question' , quiz = quiz.pk, quiz_taker = quiz_taker, question_id=question.id)
-    else:
-        question = quiz.indikator.order_by('?')
-        question = question.first()
-        return redirect('question' , quiz = quiz.pk, quiz_taker = quiz_taker, question_id=question.id)
+    except Exception as e:
+        quiz = "error"
+        messages.success(request, ('Maaf, soal belum ditambahkan'))
+        return redirect('topic')
 
 def question(request,quiz,quiz_taker,question_id):
     student = QuizTaker.objects.get(pk=quiz_taker)
@@ -70,8 +60,6 @@ def question(request,quiz,quiz_taker,question_id):
         question = Question.objects.get(pk=question_id)
         student = QuizTaker.objects.get(pk=quiz_taker)
         answered_questions = student.quiz_answers.count()
-
-        # answers = question.choices.all().order_by('?')
         answers = question.choices.all().order_by('?')
 
         choose_answer_form = ChooseAnswerForm()
@@ -111,13 +99,6 @@ def question(request,quiz,quiz_taker,question_id):
             # score = UsersAnswer.grade.count()
 
             QuizTaker.objects.filter(pk=quiz_taker).update(score=score)
-
-            # response = UsersAnswer(
-            #     quiztaker=student,
-            #     question=question,
-            #     answer=answer,
-            #     # grade=grade,
-            # )
 
             #fuzzynya disini harusnya
             answered_questions = student.quiz_answers.count()

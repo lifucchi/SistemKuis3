@@ -32,6 +32,7 @@ input[type=radio]:checked + label:before{
 {% endblock %}
 
 {% block content %}
+{% if question %}
 <div class="edu-accordion-area mg-b-15">
     <div class="container-fluid">
   <div class="progress mb-3">
@@ -49,4 +50,6 @@ input[type=radio]:checked + label:before{
 
 </div>
 </div>
+
+{% endif %}
 {% endblock %}
