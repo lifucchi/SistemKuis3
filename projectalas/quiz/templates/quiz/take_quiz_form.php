@@ -35,13 +35,13 @@ input[type=radio]:checked + label:before{
 {% if question %}
 <div class="edu-accordion-area mg-b-15">
     <div class="container-fluid">
-  <div class="progress mb-3">
+  <!-- <div class="progress mb-3">
     <div class="progress-bar" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progress }}%"></div>
-  </div>
-  <h2><span class="badge badge-secondary">{{ answered_questions|add:"1" }}/{{total_questions}}</span></h2>
+  </div> -->
+  <!-- <h2><span class="badge badge-secondary">{{ answered_questions|add:"1" }}</span></h2> -->
 
   <h2 class="mb-3">{{ quiz.name }}</h2>
-  <p class="lead">{{ question.label }}</p>
+  <p class="lead">{{ answered_questions|add:"1" }} . {{ question.label }}</p>
   <form  method="post" novalidate>
     {% csrf_token %}
     {{ form|crispy }}

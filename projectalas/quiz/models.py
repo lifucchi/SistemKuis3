@@ -56,6 +56,7 @@ class Specific_Competency(models.Model):
     base_Competency = models.ForeignKey(Base_Competency, on_delete=models.CASCADE , related_name="k_dasar")
     name = models.CharField(max_length=400)
     description = models.CharField(max_length=70)
+    order = models.IntegerField(default=0)
     # image = models.ImageField()
     # slug = models.SlugField(blank=True)
     roll_out = models.BooleanField(default=False)

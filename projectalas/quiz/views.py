@@ -38,12 +38,12 @@ def take_quiz(request, pk):
     student = request.user
     # messages.success(request, ('masuk'))
     try:
-        quiz = Specific_Competency.objects.filter(base_Competency_id=pk).first()
+        quiz = Specific_Competency.objects.filter(base_Competency_id=pk).order_by('order').first()
         obj = QuizTaker.objects.create(user=student, specific_competency=quiz)
         quiz_taker = obj.pk
         question = quiz.indikator.filter(level__lte = 0.7)
         question = question.filter(level__gte=0.3)
-        question = question.first()
+        question = question.order_by('?').first()
         return redirect('question', quiz=quiz.pk, quiz_taker=quiz_taker, question_id=question.id)
 
     except Exception as e:
@@ -70,7 +70,6 @@ def question(request,quiz,quiz_taker,question_id):
                 'form': choose_answer_form,
                 'answered_questions': answered_questions,
                 # 'quiztaker' : student
-
             }
 
         return render(request, 'quiz/take_quiz_form.php', context)
