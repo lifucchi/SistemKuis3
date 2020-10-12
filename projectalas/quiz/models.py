@@ -140,8 +140,9 @@ class UsersAnswer(models.Model):
 
 class QuizLog(models.Model):
     quiztaker = models.ForeignKey(QuizTaker, on_delete=models.CASCADE, related_name="person_answers")
-    # ql_a = models.FloatField(default=0)
-    # ql_b = models.FloatField(default=0)
+    questionlog = models.IntegerField(default=0)
+    ql_a = models.FloatField(default=0)
+    ql_b = models.FloatField(default=0)
     ql_p = models.FloatField(default=0)
     ql_c = models.FloatField(default=0)
     ql_r = models.FloatField(default=0)

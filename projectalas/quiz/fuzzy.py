@@ -13,9 +13,9 @@ def fuzzy(a , b ,p , r):
     theability = ctrl.ControlSystemSimulation(ability_ctrl)
 
     #fuzzification
-    theability.input['discriminant'] = a
-    theability.input['difficulty2'] = b
-    theability.input['probabilitas'] = p
+    theability.input['discriminant'] = float(a)
+    theability.input['difficulty2'] = float(b)
+    theability.input['probabilitas'] = float(p)
     theability.input['response'] = r
 
     #inference
@@ -30,7 +30,7 @@ def fuzzy(a , b ,p , r):
 def membership():
     x_discriminant = ctrl.Antecedent(np.arange(0, 1, 0.1), 'discriminant')
 
-    x_difficulty = ctrl.Antecedent(np.arange(0, 1, 0.1), 'difficulty')
+    # x_difficulty = ctrl.Antecedent(np.arange(0, 1, 0.1), 'difficulty')
     x_difficulty2 = ctrl.Antecedent(np.arange(-3, 3, 0.1), 'difficulty2')
 
     x_prob = ctrl.Antecedent(np.arange(0, 1, 0.1), 'probabilitas')
@@ -41,8 +41,8 @@ def membership():
     x_discriminant['good'] = fuzz.trapmf(x_discriminant.universe, [0.4, 0.6, 1, 1])
     # b
     # jika rentang  0 - 1
-    x_difficulty['lo'] = fuzz.trapmf(x_difficulty.universe, [0, 0, 0.4, 0.6])
-    x_difficulty['hi'] = fuzz.trapmf(x_difficulty.universe, [0.4, 0.6, 1, 1])
+    # x_difficulty['lo'] = fuzz.trapmf(x_difficulty.universe, [0, 0, 0.4, 0.6])
+    # x_difficulty['hi'] = fuzz.trapmf(x_difficulty.universe, [0.4, 0.6, 1, 1])
 
     # jika rentang -2 - 2
     x_difficulty2['easy'] = fuzz.trapmf(x_difficulty2.universe, [-3, -3, -1, 0])
@@ -122,3 +122,7 @@ def rule(x_discriminant, x_difficulty2, x_prob, x_response, ability):
 
     return ability_ctrl
 
+
+
+# print (fuzzy(-0.053 , 0.61 ,0.5 , 0))
+# print (fuzzy(0.8 , -0.4055 ,0.5 , 1))
