@@ -60,7 +60,7 @@ def question(request,quiz,quiz_taker,question_id):
     if request.method == 'GET':
         question = Question.objects.get(pk=question_id)
         student = QuizTaker.objects.get(pk=quiz_taker)
-        # answered_questions = student.quiz_answers.count()
+        answered_questions = student.quiz_answers.count()
         # answers = question.choices.all().order_by('?')
         answers = question.choices.all()
 
@@ -70,7 +70,7 @@ def question(request,quiz,quiz_taker,question_id):
         context = {
                 'question':question,
                 'form': choose_answer_form,
-                # 'answered_questions': answered_questions,
+                'answered_questions': answered_questions,
                 # 'quiztaker' : student
             }
 
@@ -171,7 +171,7 @@ def question(request,quiz,quiz_taker,question_id):
                 )
 
                 responselog.save()
-                
+
                 if student.user.get_unanswered_questions(quiz).exists():
                     unanswered_questions = student.user.get_unanswered_questions(quiz)
                     question = unanswered_questions.first()
