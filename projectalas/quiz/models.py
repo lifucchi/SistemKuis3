@@ -42,7 +42,7 @@ class Topic(models.Model):
 class Base_Competency(models.Model):
     core_Competency = models.ForeignKey(Core_Competency, on_delete=models.CASCADE, related_name="k_inti")
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name="topictopic")
-
+    roll_out = models.BooleanField(default=False)
     name = models.CharField(max_length=400)
     ability = models.CharField(max_length=100)
 
@@ -59,7 +59,7 @@ class Specific_Competency(models.Model):
     order = models.IntegerField(default=0)
     # image = models.ImageField()
     # slug = models.SlugField(blank=True)
-    roll_out = models.BooleanField(default=False)
+    # roll_out = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -100,10 +100,12 @@ class Answer(models.Model):
     def natural_key(self):
         return self.label
 
+
+
+
 class QuizTaker(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE , related_name="murid")
     # user = models.ForeignKey(User, on_delete=models.CASCADE)
-    specific_competency = models.ForeignKey(Specific_Competency, on_delete=models.CASCADE , related_name="indikator_diambil")
     score = models.IntegerField(default=0)
     completed = models.BooleanField(default=False)
     date_finished = models.DateTimeField(null=True)
@@ -123,6 +125,20 @@ class QuizTaker(models.Model):
 
     def natural_key(self):
         return self.user.username
+
+class ScoreDetil(models.Model):
+    specific_competency = models.ForeignKey(Specific_Competency, on_delete=models.CASCADE , related_name="indikators")
+    quiz_taker = models.ForeignKey(QuizTaker, on_delete=models.CASCADE , related_name="quiz_taker")
+    desc = models.CharField(max_length=200)
+    # question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="choices")
+    # label = models.CharField(max_length=200)
+    # is_correct = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.desc
+
+    def natural_key(self):
+        return self.desc
 
 
 class UsersAnswer(models.Model):
