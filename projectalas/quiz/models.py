@@ -81,7 +81,7 @@ class Question(models.Model):
     level = models.FloatField(default=0)
     discrimination = models.FloatField(default=0)
     # c_prob = models.FloatField(default=0)
-    order = models.IntegerField(default=0)
+    # order = models.IntegerField(default=0)
 
     def __str__(self):
         return self.label
