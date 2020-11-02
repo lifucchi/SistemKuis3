@@ -5,7 +5,7 @@ from django.http import  HttpResponse , request , response
 # from django.views.generic import TemplateView
 from django.views.generic import DetailView, ListView , View
 # from quiz.serializers import QuizListSerializer, QuizDetailSerializer, UsersAnswerSerializer, QuizResultSerializer
-from .models import Topic,Base_Competency,Core_Competency,Specific_Competency, Question, Answer, QuizTaker, UsersAnswer , Subject, QuizLog
+from .models import Topic,Base_Competency,ScoreDetil,Core_Competency,Specific_Competency, Question, Answer, QuizTaker, UsersAnswer , Subject, QuizLog
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.core.serializers.json import DjangoJSONEncoder
@@ -41,7 +41,7 @@ def take_quiz(request, pk):
     # messages.success(request, ('masuk'))
     try:
         quiz = Specific_Competency.objects.filter(base_Competency_id=pk).order_by('order').first()
-        obj = QuizTaker.objects.create(user=student, specific_competency=quiz)
+        obj = QuizTaker.objects.create(user=student)
         quiz_taker = obj.pk
         question = quiz.indikator.filter(level__lte = 2)
         question = question.filter(level__gte= -1)
@@ -59,8 +59,8 @@ def question(request,quiz,quiz_taker,question_id):
     quiz = get_object_or_404(Specific_Competency, pk=quiz)
 
     if request.method == 'GET':
-        question = Question.objects.get(pk=question_id)
-        student = QuizTaker.objects.get(pk=quiz_taker)
+        # question = Question.objects.get(pk=question_id)
+        # student = QuizTaker.objects.get(pk=quiz_taker)
         answered_questions = student.quiz_answers.count()
         # answers = question.choices.all().order_by('?')
         answers = question.choices.all()
@@ -94,6 +94,8 @@ def question(request,quiz,quiz_taker,question_id):
                 grade=grade,
             )
             aresponse.save()
+
+            ## PENENTUAN PEMILIHAN SOAL##
 
             #probabilitas
             #crips
@@ -129,8 +131,16 @@ def question(request,quiz,quiz_taker,question_id):
                 Hasil = fuzzy.fuzzy(a, b, p, r)
                 deltaability = 0
 
+            #must know the score
+            allquestion = UsersAnswer.objects.filter(quiztaker_id = quiz_taker).count()
+            score = UsersAnswer.objects.filter(quiztaker_id  = quiz_taker)
+            score = score.filter(grade = 1).count()
+            totalscore = float(score)/float(allquestion)
 
-            if deltaability == 0 and queryset.exists():
+
+            ###berakhir atau menuju next indikator?
+
+            if queryset.exists() and (deltaability == 0 or totalscore >= 0.7)  :
 
                 responselog = QuizLog(
                     questionlog=question_id,
@@ -144,14 +154,28 @@ def question(request,quiz,quiz_taker,question_id):
                     quiztaker=student
 
                 )
-
                 responselog.save()
+
+                ##save dulu kalau selesai 1 indikator
+                # scoredetil = ScoreDetil.objects.create(user=student)
+                # sc = question__
+
+                scorenya = ScoreDetil(
+                    specific_competency= quiz,
+                    quiz_taker = student ,
+                    desc = totalscore
+                )
+                scorenya.save()
+
+                #CEK APAKAH ADA NEXT INDIKATOR?
+
 
                 # return render('quiz/class-topic-page.php', quiz=quiz.pk, quiz_taker=student.pk, question_id=question.id)
 
                 topic = Topic.objects.get(pk=question.specific_Competency.base_Competency.topic.pk)
                 # bcs = Base_Competency.objects.get(pk=question.specific_Competency.base_Competency.pk)
                 bcs = Base_Competency.objects.filter(topic=topic)
+                bcs = bcs.filter(roll_out=1)
 
                 return render(request, 'quiz/class-topic-page.php', {
                     'topics': topic,
