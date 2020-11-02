@@ -197,16 +197,36 @@ def question(request,quiz,quiz_taker,question_id):
 
                 responselog.save()
 
-                if student.user.get_unanswered_questions(quiz).exists():
-                    unanswered_questions = student.user.get_unanswered_questions(quiz)
-                    question = unanswered_questions.first()
-                else:
-                    question = quiz.indikator.order_by('?')
-                    question = question.first()
+                if allquestion < 6 :
+                    if student.user.get_unanswered_questions(quiz).exists():
+                        unanswered_questions = student.user.get_unanswered_questions(quiz)
+                        question = unanswered_questions.first()
+                    else:
+                        question = quiz.indikator.order_by('?')
+                        question = question.first()
 
-                return redirect('question', quiz=quiz.pk, quiz_taker=student.pk, question_id=question.id)
+                    return redirect('question', quiz=quiz.pk, quiz_taker=student.pk, question_id=question.id)
 
+                else :
+                    scorenya = ScoreDetil(
+                        specific_competency=quiz,
+                        quiz_taker=student,
+                        desc=totalscore
+                    )
+                    scorenya.save()
 
+                    # CEK APAKAH ADA NEXT INDIKATOR?
+
+                    # return render('quiz/class-topic-page.php', quiz=quiz.pk, quiz_taker=student.pk, question_id=question.id)
+
+                    topic = Topic.objects.get(pk=question.specific_Competency.base_Competency.topic.pk)
+                    # bcs = Base_Competency.objects.get(pk=question.specific_Competency.base_Competency.pk)
+                    bcs = Base_Competency.objects.filter(topic=topic)
+                    bcs = bcs.filter(roll_out=1)
+
+                    return render(request, 'quiz/class-topic-page.php', {
+                        'topics': topic,
+                        'bcs': bcs})
 
                 # return render(request, 'quiz/class-topic-page.php', context)
 
