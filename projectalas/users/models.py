@@ -26,7 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         answered_questions = self.murid \
             .filter(quiz_answers__question__specific_Competency=quiz) \
             .values_list('quiz_answers__question__id', flat=True)
-        questions = quiz.indikator.exclude(pk__in=answered_questions).order_by('?')
+        questions = quiz.indikator.exclude(pk__in=answered_questions)
         return questions
 
 

@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.http import  HttpResponse , request , response
@@ -43,6 +42,7 @@ def take_quiz(request, pk):
         quiz = Specific_Competency.objects.filter(base_Competency_id=pk).order_by('order').first()
         obj = QuizTaker.objects.create(user=student)
         quiz_taker = obj.pk
+        # question = quiz.indikator
         question = quiz.indikator.filter(level__lte = 2)
         question = question.filter(level__gte= -1)
         question = question.order_by('?').first()
@@ -59,12 +59,8 @@ def question(request,quiz,quiz_taker,question_id):
     quiz = get_object_or_404(Specific_Competency, pk=quiz)
 
     if request.method == 'GET':
-        # question = Question.objects.get(pk=question_id)
-        # student = QuizTaker.objects.get(pk=quiz_taker)
         answered_questions = student.quiz_answers.count()
-        # answers = question.choices.all().order_by('?')
         answers = question.choices.all()
-
         choose_answer_form = ChooseAnswerForm()
         choose_answer_form.fields['answer'].queryset = answers
 
@@ -72,7 +68,6 @@ def question(request,quiz,quiz_taker,question_id):
                 'question':question,
                 'form': choose_answer_form,
                 'answered_questions': answered_questions,
-                # 'quiztaker' : student
             }
 
         return render(request, 'quiz/take_quiz_form.php', context)
@@ -107,16 +102,6 @@ def question(request,quiz,quiz_taker,question_id):
 
             queryset = QuizLog.objects.filter(quiztaker_id = quiz_taker)
 
-            # try:
-            #     # go = SomeModel.objects.get(foo='bar')
-            #     # adakah = get_object_or_404(QuizLog, quiztaker_id=quiz_taker)
-            #     # quizlogs = QuizLog.objects.filter(quiztaker_id=quiz_taker).last()
-            #     quizlog = QuizLog.objects.get(id = quiz_taker)
-            #     quizlog = QuizLog.objects.filter(quiztaker_id=quiz_taker).last()
-            #     ada = 1
-            # except QuizLog.DoesNotExist:
-            #     ada = 0
-
             if queryset.exists():
                 quizlogs = QuizLog.objects.filter(quiztaker_id=quiz_taker).last()
                 bability = quizlogs.ql_ability
@@ -140,8 +125,8 @@ def question(request,quiz,quiz_taker,question_id):
 
             ###berakhir atau menuju next indikator?
 
-            if queryset.exists() and (deltaability == 0 or totalscore >= 0.7)  :
-
+            # if queryset.exists() and (deltaability == 0 or totalscore >= 0.7):
+            if queryset.exists() and (deltaability == 0):
                 responselog = QuizLog(
                     questionlog=question_id,
                     ql_a=a,
@@ -168,18 +153,34 @@ def question(request,quiz,quiz_taker,question_id):
                 scorenya.save()
 
                 #CEK APAKAH ADA NEXT INDIKATOR?
+                indikatornow = question.specific_Competency.order
+                indikatornext = int(indikatornow) + 1
+                indikatorexist = Specific_Competency.objects.filter(pk = question.specific_Competency.pk ,order = indikatornext)
 
+                if indikatorexist.exists():
+                    if student.user.get_unanswered_questions(quiz).exists():
+                        unanswered_questions = student.user.get_unanswered_questions(quiz)
+                        # unanswered_questions = unanswered_questions.filter(specific_Competency__order=indikatornext)
+                        unanswered_questions = unanswered_questions.filter(level__lte=2)
+                        unanswered_questions = unanswered_questions.filter(level__gte=-1)
+                        question = unanswered_questions.first()
+                    else:
+                        # question = indikatorexist.indikator.filter(level__lte=2)
+                        # question = question.indikator.filter(level__gte=-1)
+                        # question = question.first()
+                        question = quiz.indikator.order_by('?')
+                        question = question.first()
 
-                # return render('quiz/class-topic-page.php', quiz=quiz.pk, quiz_taker=student.pk, question_id=question.id)
+                    return redirect('question', quiz=quiz.pk, quiz_taker=student.pk, question_id=question.id)
+                else:
+                    topic = Topic.objects.get(pk=question.specific_Competency.base_Competency.topic.pk)
+                    # bcs = Base_Competency.objects.get(pk=question.specific_Competency.base_Competency.pk)
+                    bcs = Base_Competency.objects.filter(topic=topic)
+                    bcs = bcs.filter(roll_out=1)
 
-                topic = Topic.objects.get(pk=question.specific_Competency.base_Competency.topic.pk)
-                # bcs = Base_Competency.objects.get(pk=question.specific_Competency.base_Competency.pk)
-                bcs = Base_Competency.objects.filter(topic=topic)
-                bcs = bcs.filter(roll_out=1)
-
-                return render(request, 'quiz/class-topic-page.php', {
-                    'topics': topic,
-                    'bcs': bcs })
+                    return render(request, 'quiz/class-topic-page.php', {
+                        'topics': topic,
+                        'bcs': bcs })
             else :
 
                 responselog = QuizLog(
@@ -216,41 +217,46 @@ def question(request,quiz,quiz_taker,question_id):
                     scorenya.save()
 
                     # CEK APAKAH ADA NEXT INDIKATOR?
+                    indikatornow = question.specific_Competency.order
+                    indikatornext = int(indikatornow) + 1
+                    indikatorexist = Specific_Competency.objects.filter(pk=question.specific_Competency.pk,
+                                                                        order=indikatornext)
+
+                    if indikatorexist.exists():
+                        if student.user.get_unanswered_questions(quiz).exists():
+                            unanswered_questions = student.user.get_unanswered_questions(quiz)
+                            # unanswered_questions = unanswered_questions.filter(specific_Competency__order=indikatornext)
+                            unanswered_questions = unanswered_questions.filter(level__lte=2)
+                            unanswered_questions = unanswered_questions.filter(level__gte=-1)
+                            question = unanswered_questions.first()
+                        else:
+                            # question = indikatorexist.indikator.filter(level__lte=2)
+                            # question = question.indikator.filter(level__gte=-1)
+                            # question = question.first()
+                            question = quiz.indikator.order_by('?')
+                            question = question.first()
+
+                        return redirect('question', quiz=quiz.pk, quiz_taker=student.pk, question_id=question.id)
+                    else:
+                        topic = Topic.objects.get(pk=question.specific_Competency.base_Competency.topic.pk)
+                        # bcs = Base_Competency.objects.get(pk=question.specific_Competency.base_Competency.pk)
+                        bcs = Base_Competency.objects.filter(topic=topic)
+                        bcs = bcs.filter(roll_out=1)
+
+                        return render(request, 'quiz/class-topic-page.php', {
+                            'topics': topic,
+                            'bcs': bcs})
 
                     # return render('quiz/class-topic-page.php', quiz=quiz.pk, quiz_taker=student.pk, question_id=question.id)
 
-                    topic = Topic.objects.get(pk=question.specific_Competency.base_Competency.topic.pk)
-                    # bcs = Base_Competency.objects.get(pk=question.specific_Competency.base_Competency.pk)
-                    bcs = Base_Competency.objects.filter(topic=topic)
-                    bcs = bcs.filter(roll_out=1)
-
-                    return render(request, 'quiz/class-topic-page.php', {
-                        'topics': topic,
-                        'bcs': bcs})
+                    # topic = Topic.objects.get(pk=question.specific_Competency.base_Competency.topic.pk)
+                    # # bcs = Base_Competency.objects.get(pk=question.specific_Competency.base_Competency.pk)
+                    # bcs = Base_Competency.objects.filter(topic=topic)
+                    # bcs = bcs.filter(roll_out=1)
+                    #
+                    # return render(request, 'quiz/class-topic-page.php', {
+                    #     'topics': topic,
+                    #     'bcs': bcs})
 
                 # return render(request, 'quiz/class-topic-page.php', context)
 
-            # score = UsersAnswer.objects.filter(quiztaker = quiz_taker).filter(answer__is_correct = 1),count()
-            # score = UsersAnswer.objects.filter(quiztaker = quiz_taker)
-            # score = UsersAnswer.objects.filter(grade = 1).count()
-            # score = UsersAnswer.grade.count()
-
-            # QuizTaker.objects.filter(pk=quiz_taker).update(score=score)
-
-            #fuzzynya disini harusnya
-            # answered_questions = student.quiz_answers.count()
-
-            # if answered_questions % 5 == 0:
-                # hitung fuzzy
-
-                # return redirect('question', quiz=quiz.pk, quiz_taker=student.pk, question_id=question.id)
-
-            # else:
-            #     if student.user.get_unanswered_questions(quiz).exists():
-            #         unanswered_questions = student.user.get_unanswered_questions(quiz)
-            #         question = unanswered_questions.first()
-            #     else:
-            #         question = quiz.indikator.order_by('?')
-            #         question = question.first()
-            #
-            #     return redirect('question', quiz=quiz.pk, quiz_taker=student.pk, question_id=question.id)
