@@ -53,6 +53,10 @@ def take_quiz(request, pk):
         messages.success(request, ('Maaf, soal belum ditambahkan'))
         return redirect('topic')
 
+
+##penentuan soal
+# def penentuan ()
+
 def question(request,quiz,quiz_taker,question_id):
     student = QuizTaker.objects.get(pk=quiz_taker)
     question = Question.objects.get(pk=question_id)
@@ -107,14 +111,22 @@ def question(request,quiz,quiz_taker,question_id):
                 bability = quizlogs.ql_ability
                 p = c + (1 - c) * ((2.718 ** (1.7 * a * (bability - b))) / (1 + 2.718 ** (1.7 * a * (bability - b))))
                 ################fuzzy#########################
-                Hasil = fuzzy.fuzzy(a, b, p, r)
+                # Hasil = fuzzy.fuzzy(a, b, p, r)
+                # Hasil = fuzzy.mfuzzy(a, b, p, r)
+                hasil = fuzzy.mfuzzy(a, b, p, r)
+                Hasil = hasil.fuzzy()
+
                 deltaability = Hasil - bability
 
             else:
                 p = 0.5
                 ################fuzzy#########################
-                Hasil = fuzzy.fuzzy(a, b, p, r)
+                # Hasil = fuzzy.fuzzy(a, b, p, r)
+                # Hasil = fuzzy.mfuzzy(a, b, p, r)
+                hasil = fuzzy.mfuzzy(a, b, p, r)
+                Hasil = hasil.fuzzy()
                 deltaability = 0
+
 
             #must know the score
             allquestion = UsersAnswer.objects.filter(quiztaker_id = quiz_taker).count()
@@ -154,7 +166,7 @@ def question(request,quiz,quiz_taker,question_id):
 
                 #CEK APAKAH ADA NEXT INDIKATOR?
                 indikatornow = question.specific_Competency.order
-                indikatornext = int(indikatornow) + 1
+                indikatornext = int(indikatornow)
                 indikatorexist = Specific_Competency.objects.filter(pk = question.specific_Competency.pk ,order = indikatornext)
 
                 if indikatorexist.exists():
@@ -218,9 +230,8 @@ def question(request,quiz,quiz_taker,question_id):
 
                     # CEK APAKAH ADA NEXT INDIKATOR?
                     indikatornow = question.specific_Competency.order
-                    indikatornext = int(indikatornow) + 1
-                    indikatorexist = Specific_Competency.objects.filter(pk=question.specific_Competency.pk,
-                                                                        order=indikatornext)
+                    indikatornext = int(indikatornow)
+                    indikatorexist = Specific_Competency.objects.filter(pk=question.specific_Competency.pk, order=indikatornext)
 
                     if indikatorexist.exists():
                         if student.user.get_unanswered_questions(quiz).exists():
