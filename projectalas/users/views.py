@@ -27,6 +27,12 @@ from django.urls import reverse_lazy
 #
 #     return render(request, 'users/register.php' , {'form': form })
 
+# def login(request, **kwargs):
+#     if request.user.is_authenticated:
+#         return redirect('/home/')
+#     else:
+#         return auth_views.LoginView(request, **kwargs)
+
 # Create your class.
 class register(CreateView):
     form_class = UserRegisterForm
@@ -35,8 +41,3 @@ class register(CreateView):
 
 
 
-def login(request, **kwargs):
-    if request.user.is_authenticated:
-        return redirect('/home/')
-    else:
-        return auth_views.LoginView(request, **kwargs)
