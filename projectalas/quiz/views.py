@@ -128,7 +128,7 @@ def question(request,quiz,quiz_taker,question_id):
                 ################fuzzy#########################
                 # Hasil = fuzzy.fuzzy(a, b, p, r)
                 # Hasil = fuzzy.mfuzzy(a, b, p, r)
-                hasil = fuzzy.mfuzzy(a, b, p, r)
+                hasil = fuzzy.Mfuzzy(a, b, p, r)
                 Hasil = hasil.fuzzy()
 
                 deltaability = Hasil - bability
@@ -138,7 +138,7 @@ def question(request,quiz,quiz_taker,question_id):
                 ################fuzzy#########################
                 # Hasil = fuzzy.fuzzy(a, b, p, r)
                 # Hasil = fuzzy.mfuzzy(a, b, p, r)
-                hasil = fuzzy.mfuzzy(a, b, p, r)
+                hasil = fuzzy.Mfuzzy(a, b, p, r)
                 Hasil = hasil.fuzzy()
                 deltaability = 0
 

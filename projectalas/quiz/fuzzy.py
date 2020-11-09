@@ -3,7 +3,7 @@ import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
-class mfuzzy:
+class Mfuzzy:
     def __init__(self, a , b ,p , r):
         self.a = a
         self.b = b
