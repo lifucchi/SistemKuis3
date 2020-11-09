@@ -13,25 +13,40 @@ from django.db import transaction
 from django.contrib import messages
 from .forms import ChooseAnswerForm
 from . import fuzzy
+from django.utils.decorators import method_decorator
+from django.utils import timezone
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class topicList (ListView):
+# decorators = [never_cache, login_required]
+
+class TopicList (LoginRequiredMixin,ListView):
     model = Topic
     # queryset = Question.objects.all()
     template_name = 'quiz/class-page.php'
     context_object_name = 'topic_list'
 
     def get_queryset(self):
-        queryset = super(topicList, self).get_queryset()
+        queryset = super(TopicList, self).get_queryset()
         return queryset
 
-@login_required()
-def topicDetail (request, slug):
-    topic = get_object_or_404(Topic, slug=slug)
-    bc = Base_Competency.objects.filter(topic=topic)
-    bc = bc.filter(roll_out=1)
-    return render(request, 'quiz/class-topic-page.php', {
-        'topics': topic,
-        'bcs': bc})
+# @login_required()
+# def topicDetail (request, slug):
+#     topic = get_object_or_404(Topic, slug=slug)
+#     bc = Base_Competency.objects.filter(topic=topic)
+#     bc = bc.filter(roll_out=1)
+#     return render(request, 'quiz/class-topic-page.php', {
+#         'topics': topic,
+#         'bcs': bc})
+
+class TopicDetailView(LoginRequiredMixin,DetailView):
+    model = Topic
+    template_name = 'quiz/class-topic-page.php'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['topics'] = get_object_or_404(Topic, slug=self.kwargs['slug'])
+        context['bcs'] = Base_Competency.objects.filter(topic= context['topics'].pk ).filter(roll_out=1)
+        return context
 
 
 @login_required
