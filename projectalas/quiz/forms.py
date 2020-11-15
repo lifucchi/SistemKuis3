@@ -23,6 +23,12 @@ class ChooseAnswerForm(forms.Form):
     #     fields = ('answer', )
 
 
+class QuizTakerForm(forms.ModelForm):
+    class Meta:
+        model = QuizTaker
+        fields = ('user',)
+
+
 # class QuestionForm(forms.ModelForm):
 #     class Meta:
 #         model = Question
