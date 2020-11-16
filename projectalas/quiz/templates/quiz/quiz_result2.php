@@ -2,12 +2,6 @@
 
 
 {% block content %}
-        PK BASECOMPETENCY {{bc}}
-        <br>
-        PK INDIKATTOR BARU {{newIndikator}}
-        <br>
-        PK SOAL BARY {{newquestion}}
-        <br>
-        MURID {{student}}
+        masalah osal untuk {{vars}} {{indikatornext}}
 
 {% endblock %}

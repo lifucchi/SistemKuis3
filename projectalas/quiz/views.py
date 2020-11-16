@@ -115,6 +115,38 @@ def newIndikator(indikatorexist,ordernext):
     nextIndikator = get_object_or_404(Specific_Competency, order = ordernext , base_Competency_id = indikatorexist )
     return nextIndikator
 
+def soalKemampuan(Hasil, quiz,student):
+    satuindikator = student.user.get_unanswered_questions(quiz)
+    #verylow
+    if Hasil < -0.5:
+        satuindikator = satuindikator.filter(level__lte=-1,level__gte=-3)
+        var ="verylow"
+    #Low
+    elif Hasil > -1 and Hasil < 0.5:
+        satuindikator = satuindikator.filter(level__lte=0, level__gte=-1)
+        var ="low"
+
+    #Averange
+    elif Hasil >0 and Hasil < 1.5:
+        satuindikator = satuindikator.filter(level__lte=1,level__gte=0)
+        var ="Averange"
+
+    #good
+    elif Hasil > 0.5 and Hasil < 2:
+        satuindikator = satuindikator.filter(level__lte=2, level__gte=1)
+        var ="good"
+
+
+    #excellent
+    elif Hasil > 1.5:
+        satuindikator = satuindikator.filter(level__gte=2)
+        var = "excelent"
+
+    return satuindikator , var
+
+
+
+
 def question(request,quiz,quiz_taker,question_id):
     student = QuizTaker.objects.get(pk=quiz_taker)
     question = Question.objects.get(pk=question_id)
@@ -239,9 +271,11 @@ def question(request,quiz,quiz_taker,question_id):
                 if allquestion < 6 :
 
                     #memberikan soal sesuai dengan kemampuan
-                    if student.user.get_unanswered_questions(quiz).exists():
-                        unanswered_questions = student.user.get_unanswered_questions(quiz)
-                        newquestion = unanswered_questions.first()
+                    newQuestion, var = soalKemampuan(Hasil, quiz, student)
+
+                    if newQuestion.exists():
+                        # unanswered_questions = student.user.get_unanswered_questions(quiz)
+                        newquestion = newQuestion.first()
 
                         return redirect('question', quiz=quiz.pk, quiz_taker=student.pk, question_id=newquestion.id)
 
@@ -250,7 +284,8 @@ def question(request,quiz,quiz_taker,question_id):
                         # question = question.first()
 
                         context = {
-                            'indikatornext': "SOALNYA HABES",
+                            'indikatornext': "SOALNYA TIDAK ADA",
+                            'vars' : var
 
                         }
                         return render(request, 'quiz/quiz_result2.php', context)
