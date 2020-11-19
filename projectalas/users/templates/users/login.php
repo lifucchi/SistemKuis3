@@ -1,58 +1,82 @@
-{% extends "users/base2.php" %}
+{% load static %}
 {% load crispy_forms_tags %}
-      {% block content %}
-	<div class="error-pagewrap">
-		<div class="error-page-int">
-			<div class="text-center m-b-md custom-login">
-				<h3>TOLONG MASUK TERLEBIH DAHULU</h3>
-				<!-- <p>This is the best app ever!</p> -->
-			</div>
-			<div class="content-error">
-				<div class="hpanel">
-                    <div class="panel-body">
-                        <form method="POST" id="loginForm">
+
+
+
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Login</title>
+    <!-- <meta name="description" content="Ela Admin - HTML5 Admin Template"> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- <link rel="apple-touch-icon" href="https://i.imgur.com/QRAUqs9.png"> -->
+    <!-- <link rel="shortcut icon" href="https://i.imgur.com/QRAUqs9.png"> -->
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pixeden-stroke-7-icon@1.2.3/pe-icon-7-stroke/dist/pe-icon-7-stroke.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.0/css/flag-icon.min.css">
+    <!-- <link rel="stylesheet" href="assets/css/cs-skin-elastic.css">
+    <link rel="stylesheet" href="assets/css/style.css"> -->
+    <link rel="stylesheet" href="{% static 'assets/css/cs-skin-elastic.css'%}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css'%}">
+
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
+</head>
+<body class="bg-dark">
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+
+  <br>
+
+    <div class="sufee-login d-flex align-content-center flex-wrap">
+        <div class="container">
+            <div class="login-content">
+                <!-- <div class="login-logo">
+                    <a href="index.html">
+                        <img class="align-content" src="images/logo.png" alt="">
+                    </a>
+                </div> -->
+                <div class="login-form">
+
+                    <form method="POST" id="loginForm">
                           {% csrf_token %}
                             <fieldset class="form-group">
-                                <!-- <label class="control-label" for="username">Username</label>
-                                <input type="text" placeholder="example@gmail.com" title="Please enter you username" required="" value="" name="username" id="username" class="form-control">
-                                <span class="help-block small">Your unique username to app</span> -->
                                     {{ form|crispy }}
                             </fieldset>
-                            <!-- <div class="form-group">
-                                <label class="control-label" for="password">Password</label>
-                                <input type="password" title="Please enter your password" placeholder="******" required="" value="" name="password" id="password" class="form-control">
-                                <span class="help-block small">Yur strong password</span>
-                            </div> -->
-                            <!-- <div class="checkbox login-checkbox">
-                                <label>
-										<input type="checkbox" class="i-checks"> Remember me </label>
-                                <p class="help-block small">(if this is a private computer)</p>
-                            </div> -->
                             <div class="text-center">
                               <button class="btn btn-success loginbtn">Masuk Akun</button>
                           </div>
-
-                        </form>
-                        <br>
-                        <div class="border-top pt-3">
-                        <!-- <small class="text-muted">Belum memiliki akun?
-                              <p><a href="{% url 'register' %}">Daftar</a></p>
-                        </small> -->
-                    </div>
-                    </div>
+                          <div class="register-link m-t-15 text-center">
+                              <p>Tidak memiliki akun ? <a href="{% url 'register' %}"> Daftar</a></p>
+                          </div>
+                    </form>
                 </div>
-			</div>
-
-			<div class="text-center login-footer">
-        <div class="border-top pt-3">
-        <!-- <small class="text-muted">Belum memiliki akun? -->
-              <p>Belum memiliki akun? <a href="{% url 'register' %}">Daftar</a></p>
-        <!-- </small> -->
-      </div>
-      <br>
-				<p>Copyright © 2018. All rights reserved. Template by <a href="https://colorlib.com/wp/templates/">Colorlib</a></p>
-			</div>
-		</div>
+            </div>
+        </div>
     </div>
 
-      {% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.4/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-match-height@0.7.2/dist/jquery.matchHeight.min.js"></script>
+    <!-- <script src="assets/js/main.js"></script> -->
+    <script src="{% static 'assets/js/main.js'%}"></script>
+
+
+</body>
+</html>
