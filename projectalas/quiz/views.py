@@ -42,17 +42,31 @@ class ClassList(LoginRequiredMixin,DetailView):
         context['ccs'] = Core_Competency.objects.filter(subject_id= self.kwargs['pk'])
         return context
 
-
-
-class TopicList (LoginRequiredMixin,ListView):
-    model = Topic
+class TopicList (LoginRequiredMixin,DetailView):
+    model = Core_Competency
     # queryset = Question.objects.all()
-    template_name = 'quiz/class-page.php'
+    template_name = 'quiz/page-topic.php'
     context_object_name = 'topic_list'
 
-    def get_queryset(self):
-        queryset = super(TopicList, self).get_queryset()
-        return queryset
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # context['subject'] = get_object_or_404(Subject, pk=self.kwargs['pk'])
+        context['bcs'] = Base_Competency.objects.filter(core_Competency_id=self.kwargs['pk'])
+        if context['bcs'].count() > 0:
+            context['topic_name'] = context['bcs'][0].topic.name
+        else:
+            pass
+        return context
+
+# class TopicList (LoginRequiredMixin,ListView):
+#     model = Topic
+#     # queryset = Question.objects.all()
+#     template_name = 'quiz/class-page.php'
+#     context_object_name = 'topic_list'
+#
+#     def get_queryset(self):
+#         queryset = super(TopicList, self).get_queryset()
+#         return queryset
 
 # @login_required()
 # def topicDetail (request, slug):
@@ -91,7 +105,7 @@ def take_quiz(request, pk):
     except Exception as e:
         quiz = "error"
         messages.success(request, ('Maaf, soal belum ditambahkan'))
-        return redirect('topic')
+        return redirect('topics', pk = pk)
 
 ##penentuan soal
 

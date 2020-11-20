@@ -45,11 +45,11 @@
             <div id="main-menu" class="main-menu collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li class="">
-                        <a href=" {% url 'subjects'%} "><i class="menu-icon fa fa-laptop"></i>Mata Pelajaran </a>
+                        <a onclick="return confirm('Apa anda yakin? Data akan hilang?')" href=" {% url 'subjects'%} "><i class="menu-icon fa fa-laptop"></i>Mata Pelajaran </a>
                     </li>
 
                     <li>
-                        <a href="widgets.html"> <i class="menu-icon ti-email"></i>Kelas </a>
+                        <a onclick="return confirm('Apa anda yakin? Data akan hilang?')" href="widgets.html"> <i class="menu-icon ti-email"></i>Kelas </a>
                     </li>
                 </ul>
             </div><!-- /.navbar-collapse -->
@@ -62,7 +62,7 @@
         <header id="header" class="header">
             <div class="top-left">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="./">SistemKuis</a>
+                    <a onclick="return confirm('Apa anda yakin? Data akan hilang?')" class="navbar-brand" href="./">SistemKuis</a>
                     <!-- <a class="navbar-brand" href="./">  SistemKuis</a> -->
                     <a id="menuToggle" class="menutoggle"><i class="fa fa-bars"></i></a>
 
@@ -129,7 +129,7 @@
 
                                 <a class="nav-link" href="#"><i class="fa fa -cog"></i>Kelas</a>
 
-                                <a class="nav-link" href="{% url 'logout'%}"><i class="fa fa-power -off"></i>Logout</a>
+                                <a onclick="return confirm('Apa anda yakin? Data akan hilang')" class="nav-link" href="{% url 'logout'%}"><i class="fa fa-power -off"></i>Logout</a>
                             </div>
                         </div>
                         {% else %}

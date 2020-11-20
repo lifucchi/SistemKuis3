@@ -10,7 +10,8 @@
                     <strong class="card-title">Kelas {{ cc.classes }}</strong>
                 </div>
                 <div class="card-body">
-
+                  <p class="card-text">{{cc.name}}</p>
+                  <button onclick="location.href = '{% url 'topics' pk=cc.id %}';" type="button" class="btn btn-primary" style="float: right;"><i class="fa fa-star"></i>&nbsp;Selengkapnya</button>
                 </div>
             </div>
         </div>

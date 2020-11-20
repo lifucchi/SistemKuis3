@@ -8,6 +8,8 @@ urlpatterns = [
     path(r"", SubjectsList.as_view(), name='subjects'),
     path(r"kelas/<int:pk>/", ClassList.as_view(), name='classes'),
 
+    path(r"kelas/topik/<int:pk>/", TopicList.as_view(), name='topics'),
+
     # re_path(r"^(?P<slug>[\w\-]+)/$", views.topicDetail, name='topicDetail'),
     # path('<slug:slug>/', views.TopicDetailView.as_view(), name='topicDetail'),
     path('quiz/<int:pk>/', views.take_quiz, name='take_quiz'),
