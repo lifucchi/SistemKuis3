@@ -786,7 +786,7 @@
     <!--Local Stuff-->
     <script>
         jQuery(document).ready(function($) {
-    
+
         });
     </script>
 </body>

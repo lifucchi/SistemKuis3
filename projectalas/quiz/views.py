@@ -21,6 +21,29 @@ from django.views.generic.edit import CreateView
 
 # decorators = [never_cache, login_required]
 
+class SubjectsList(LoginRequiredMixin,ListView):
+    model = Subject
+
+    template_name = 'quiz/page-subject.php'
+    context_object_name = 'subject_list'
+
+    def get_queryset(self):
+        queryset = super(SubjectsList, self).get_queryset()
+        return queryset
+
+class ClassList(LoginRequiredMixin,DetailView):
+    model = Subject
+    template_name = 'quiz/page-class.php'
+    context_object_name = 'class_list'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # context['subject'] = get_object_or_404(Subject, pk=self.kwargs['pk'])
+        context['ccs'] = Core_Competency.objects.filter(subject_id= self.kwargs['pk'])
+        return context
+
+
+
 class TopicList (LoginRequiredMixin,ListView):
     model = Topic
     # queryset = Question.objects.all()
