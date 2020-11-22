@@ -285,13 +285,15 @@ def question(request,quiz,quiz_taker,question_id):
                     # Hitung score
                     Scorenya = menghitungScoreKeseluruhan(quiz_taker)
                     Scorenya = (round(Scorenya, 2))
+                    indikatorscore = ScoreDetil.objects.filter(quiz_taker_id = quiz_taker)
                     QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
                     # MASUKKAN NILAI DISINI
                     context = {
-                        'indikatornext': (Scorenya*100),
+                        'indikatorscore' : indikatorscore,
+                        'indikatornext': (Scorenya * 100),
 
                     }
-                    return render(request, 'quiz/quiz_result.php', context)
+                    return render(request, 'quiz/page-quiz_result.php', context)
             else:
                 responselog = QuizLog(
                     questionlog=question_id,
@@ -357,13 +359,15 @@ def question(request,quiz,quiz_taker,question_id):
                         # Hitung score
                         Scorenya = menghitungScoreKeseluruhan(quiz_taker)
                         Scorenya = (round(Scorenya, 2))
+                        indikatorscore = ScoreDetil.objects.filter(quiz_taker_id=quiz_taker)
                         QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
                         # MASUKKAN NILAI DISINI
                         context = {
+                            'indikatorscore': indikatorscore,
                             'indikatornext': (Scorenya * 100),
 
                         }
-                        return render(request, 'quiz/quiz_result.php', context)
+                        return render(request, 'quiz/page-quiz_result.php', context)
 
         else:
             grade = 0
@@ -437,13 +441,15 @@ def question(request,quiz,quiz_taker,question_id):
                     # Hitung score
                     Scorenya = menghitungScoreKeseluruhan(quiz_taker)
                     Scorenya = (round(Scorenya, 2))
+                    indikatorscore = ScoreDetil.objects.filter(quiz_taker_id = quiz_taker)
                     QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
                     # MASUKKAN NILAI DISINI
                     context = {
+                        'indikatorscore' : indikatorscore,
                         'indikatornext': (Scorenya * 100),
 
                     }
-                    return render(request, 'quiz/quiz_result.php', context)
+                    return render(request, 'quiz/page-quiz_result.php', context)
             else:
                 responselog = QuizLog(
                     questionlog=question_id,
@@ -501,6 +507,7 @@ def question(request,quiz,quiz_taker,question_id):
                                             question_id=newquestion.pk)
 
                         else:
+
                             context = {
                                 'indikatornext': "SOALNYA HABIIIIIISSSSSSSSSS",
                             }
@@ -509,47 +516,13 @@ def question(request,quiz,quiz_taker,question_id):
                         # Hitung score
                         Scorenya = menghitungScoreKeseluruhan(quiz_taker)
                         Scorenya = (round(Scorenya, 2))
+                        indikatorscore = objects.ilter(quiz_taker_id=quiz_taker)
                         QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
                         # MASUKKAN NILAI DISINI
                         context = {
+                            'indikatorscore': indikatorscore,
                             'indikatornext': (Scorenya * 100),
 
                         }
-                        return render(request, 'quiz/quiz_result.php', context)
+                        return render(request, 'quiz/page-quiz_result', context)
 
-
-
-
-# class TakeQuiz(LoginRequiredMixin,CreateView):
-#     model = QuizTaker
-#     fields = ['user']
-#     # form_class = QuizTakerForm
-#     template_name = 'quiz/class-topic-page.php'
-#
-#     def form_valid(self, form):
-#         form.instance.user = self.request.user
-#         return super().form_valid(form)
-#
-#     # def get_queryset(self):
-#         # student = self.request.user
-#         # self.quiz = Specific_Competency.objects.filter(base_Competency_id=self.kwargs['pk']).order_by('order').first()
-#         # self.question = self.quiz.indikator.filter(level__lte = 2, level__gte= -1).order_by('?').first()
-#         # return self.user.post_set.order_by('-id')
-#
-#     def get_context_data(self, **kwargs):
-#         # student = self.request.user
-#         context = super().get_context_data(**kwargs)
-#         context['quiz'] = Specific_Competency.objects.filter(base_Competency_id=self.kwargs['pk']).order_by('order').first()
-#         # obj = QuizTaker.objects.create(user=student)
-#         # context['quiz_taker'] = obj.pk
-#         ##question
-#         context['question'] = context['quiz'].indikator.filter(level__lte = 2, level__gte= -1).order_by('?').first()
-#         # context['quiz'] = self.quiz
-#         # context['question'] = self.question
-#         return context
-#
-#     def get_success_url(self):
-#         quiz = Specific_Competency.objects.filter(base_Competency_id=self.kwargs['pk']).order_by('order').first()
-#         question = self.quiz.indikator.filter(level__lte = 2, level__gte= -1).order_by('?').first()
-#         return redirect('question', quiz = quiz.pk, quiz_taker=self.object.id, question_id= question.id)
-#
