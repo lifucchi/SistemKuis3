@@ -123,10 +123,11 @@ def menghitungScoreIndikator(quiz_taker,indikator):
     return totalscore, allquestion
 
 
-def menghitungFuzzy(quiz_taker,a,b,c,r):
-    queryset = QuizLog.objects.filter(quiztaker_id=quiz_taker)
+def menghitungFuzzy(quiz_taker,quiz,a,b,c,r):
+    queryset = QuizLog.objects.filter(quiztaker_id=quiz_taker, sclog = quiz.id)
+    # detilskor = ScoreDetil.objects.filter(quiz_taker_id=quiz_taker, specific_competency_id = quiz.pk)
 
-    if queryset.exists():
+    if queryset.exists() :
         quizlogs = QuizLog.objects.filter(quiztaker_id=quiz_taker).last()
         bability = quizlogs.ql_ability
         p = c + (1 - c) * ((2.718 ** (1.7 * a * (bability - b))) / (1 + 2.718 ** (1.7 * a * (bability - b))))
@@ -140,7 +141,7 @@ def menghitungFuzzy(quiz_taker,a,b,c,r):
         Hasil = hasil.fuzzy()
         deltaability = 0
 
-    return queryset,p,Hasil, deltaability
+    return queryset, p,Hasil, deltaability
 
 def indikatorNext(quiz, student):
     unanswered_questions = student.user.get_unanswered_questions(quiz)
@@ -229,7 +230,7 @@ def question(request,quiz,quiz_taker,question_id):
             r = grade
 
             #FUZZY
-            queryset,p,Hasil, deltaability = menghitungFuzzy(quiz_taker, a, b, c, r)
+            queryset, p,Hasil, deltaability = menghitungFuzzy(quiz_taker,quiz, a, b, c, r)
 
             #must know the score
             totalscore, allquestion = menghitungScoreIndikator(quiz_taker,question.specific_Competency.pk)
@@ -239,9 +240,10 @@ def question(request,quiz,quiz_taker,question_id):
             # CEK APAKAH ADA NEXT INDIKATOR?
             indikatorexist,ordernext = menghitungIndikator(question)
 
-            if queryset.exists() and (deltaability == 0):
+            if queryset.exists()  and (deltaability == 0):
                 responselog = QuizLog(
                     questionlog=question_id,
+                    sclog = quiz.id,
                     ql_a=a,
                     ql_b=b,
                     ql_p=p,
@@ -266,32 +268,25 @@ def question(request,quiz,quiz_taker,question_id):
 
                 if indikatorexist.exists():
                     nextIndikator = newIndikator(question.specific_Competency.base_Competency.pk,ordernext)
-                    newquestion = indikatorNext(nextIndikator,student)
                     if student.user.get_unanswered_questions(nextIndikator).exists():
-                        # context = {
-                        #     'bc' : question.specific_Competency.base_Competency.pk ,
-                        #     'newIndikator': nextIndikator.pk,
-                        #     'newquestion' : newquestion.pk,
-                        #     'student' : student,
-                        #
-                        # }
-                        # return render(request, 'quiz/quiz_result2.php', context)
+                        newquestion = indikatorNext(nextIndikator, student)
                         return redirect('question', quiz=nextIndikator.pk, quiz_taker=student.pk, question_id=newquestion.pk)
 
                     else:
                         context = {
-                            'indikatornext': "SOALNYA HABIIIIIISSSSSSSSSS",
+                            'indikatornext': "soal tidak ditemukan",
                         }
                         return render(request, 'quiz/quiz_result2.php', context)
                 else:
                     context = {
-                        'indikatornext': "KOMPETENSI SELESAI",
+                        'indikatornext': "semua kompetensi telah dikerjakan",
 
                     }
                     return render(request, 'quiz/quiz_result.php', context)
             else:
                 responselog = QuizLog(
                     questionlog=question_id,
+                    sclog=quiz.id,
                     ql_a=a,
                     ql_b=b,
                     ql_p=p,
@@ -336,43 +331,22 @@ def question(request,quiz,quiz_taker,question_id):
                     )
                     scorenya.save()
 
-                    # CEK APAKAH ADA NEXT INDIKATOR?
-                    # indikatornow = question.specific_Competency.order
-                    # indikatornext = int(indikatornow)
-                    # indikatorexist = Specific_Competency.objects.filter(pk=question.specific_Competency.pk, order=indikatornext)
-
-                    # indikatorexist = menghitungIndikator(question)
-
-                    # indikatorexist, indikatornext = menghitungIndikator(question)
-
                     if indikatorexist.exists():
                         nextIndikator = newIndikator(question.specific_Competency.base_Competency.pk, ordernext)
                         if student.user.get_unanswered_questions(nextIndikator).exists():
-                            nextIndikator = newIndikator(indikatorexist, ordernext)
+
                             newquestion = indikatorNext(nextIndikator, student)
-                            # context = {
-                            #     'newIndikator': indikatorexist.k_dasar.pk,
-                            #     'newquestion': newquestion.pk,
-                            #     'newIndikator': nextIndikator.pk,
-                            #     'student': student,
-                            #
-                            # }
-                            # return render(request, 'quiz/quiz_result2.php', context)
                             return redirect('question', quiz=nextIndikator.pk, quiz_taker=student.pk,
                                             question_id=newquestion.pk)
 
                         else:
                             context = {
-                                'indikatornext': "SOAL HABIS",
-
+                                'indikatornext': "SOALNYA HABIIIIIISSSSSSSSSS",
                             }
-                            return render(request, 'quiz/quiz_result.php', context)
-
-
+                            return render(request, 'quiz/quiz_result2.php', context)
                     else:
-
                         context = {
-                            'indikatornext': "KOMPETENSI SELESAI",
+                            'indikatornext': "kompetensi selanjutnya tidak ada",
 
                         }
                         return render(request, 'quiz/quiz_result.php', context)

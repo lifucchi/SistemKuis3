@@ -100,9 +100,6 @@ class Answer(models.Model):
     def natural_key(self):
         return self.label
 
-
-
-
 class QuizTaker(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE , related_name="murid")
     # user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -157,6 +154,7 @@ class UsersAnswer(models.Model):
 class QuizLog(models.Model):
     quiztaker = models.ForeignKey(QuizTaker, on_delete=models.CASCADE, related_name="person_answers")
     questionlog = models.IntegerField(default=0)
+    sclog = models.IntegerField(default=0)
     ql_a = models.FloatField(default=0)
     ql_b = models.FloatField(default=0)
     ql_p = models.FloatField(default=0)

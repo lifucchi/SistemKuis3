@@ -2,5 +2,5 @@
 
 
 {% block content %}
-        {{indikatornext}}
+        <!-- LEBIH DARI 6 SOAL {{indikatornext}} -->
 {% endblock %}
