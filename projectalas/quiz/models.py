@@ -103,7 +103,7 @@ class Answer(models.Model):
 class QuizTaker(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE , related_name="murid")
     # user = models.ForeignKey(User, on_delete=models.CASCADE)
-    score = models.IntegerField(default=0)
+    score = models.FloatField(default=0)
     completed = models.BooleanField(default=False)
     date_finished = models.DateTimeField(null=True)
     timestamp = models.DateTimeField(auto_now_add=True)

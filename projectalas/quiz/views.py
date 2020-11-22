@@ -18,6 +18,7 @@ from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView
+from django.db.models import Avg
 
 # decorators = [never_cache, login_required]
 
@@ -122,6 +123,9 @@ def menghitungScoreIndikator(quiz_taker,indikator):
     totalscore = float(score) / float(allquestion)
     return totalscore, allquestion
 
+def menghitungScoreKeseluruhan(quiz_taker):
+    scoreDetails = ScoreDetil.objects.filter(quiz_taker_id=quiz_taker).aggregate(Avg('desc'))['desc__avg']
+    return float(scoreDetails)
 
 def menghitungFuzzy(quiz_taker,quiz,a,b,c,r):
     queryset = QuizLog.objects.filter(quiztaker_id=quiz_taker, sclog = quiz.id)
@@ -278,8 +282,13 @@ def question(request,quiz,quiz_taker,question_id):
                         }
                         return render(request, 'quiz/quiz_result2.php', context)
                 else:
+                    # Hitung score
+                    Scorenya = menghitungScoreKeseluruhan(quiz_taker)
+                    Scorenya = (round(Scorenya, 2))
+                    QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
+                    # MASUKKAN NILAI DISINI
                     context = {
-                        'indikatornext': "semua kompetensi telah dikerjakan",
+                        'indikatornext': (Scorenya*100),
 
                     }
                     return render(request, 'quiz/quiz_result.php', context)
@@ -345,33 +354,170 @@ def question(request,quiz,quiz_taker,question_id):
                             }
                             return render(request, 'quiz/quiz_result2.php', context)
                     else:
+                        # Hitung score
+                        Scorenya = menghitungScoreKeseluruhan(quiz_taker)
+                        Scorenya = (round(Scorenya, 2))
+                        QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
+                        # MASUKKAN NILAI DISINI
                         context = {
-                            'indikatornext': "kompetensi selanjutnya tidak ada",
+                            'indikatornext': (Scorenya * 100),
 
                         }
                         return render(request, 'quiz/quiz_result.php', context)
 
-                        # topic = Topic.objects.get(pk=question.specific_Competency.base_Competency.topic.pk)
-                        # # bcs = Base_Competency.objects.get(pk=question.specific_Competency.base_Competency.pk)
-                        # bcs = Base_Competency.objects.filter(topic=topic)
-                        # bcs = bcs.filter(roll_out=1)
-                        #
-                        # return render(request, 'quiz/class-topic-page.php', {
-                        #     'topics': topic,
-                        #     'bcs': bcs})
+        else:
+            grade = 0
 
-                    # return render('quiz/class-topic-page.php', quiz=quiz.pk, quiz_taker=student.pk, question_id=question.id)
+            aresponse = UsersAnswer(
+                quiztaker=student,
+                question=question,
+                answer= None,
+                grade=grade,
+            )
+            aresponse.save()
 
-                    # topic = Topic.objects.get(pk=question.specific_Competency.base_Competency.topic.pk)
-                    # # bcs = Base_Competency.objects.get(pk=question.specific_Competency.base_Competency.pk)
-                    # bcs = Base_Competency.objects.filter(topic=topic)
-                    # bcs = bcs.filter(roll_out=1)
-                    #
-                    # return render(request, 'quiz/class-topic-page.php', {
-                    #     'topics': topic,
-                    #     'bcs': bcs})
 
-                # return render(request, 'quiz/class-topic-page.php', context)
+            ## PENENTUAN PEMILIHAN SOAL##
+
+            #crips
+            c = 0.25
+            a = question.discrimination
+            b = question.level
+            r = grade
+
+            #FUZZY
+            queryset, p,Hasil, deltaability = menghitungFuzzy(quiz_taker,quiz, a, b, c, r)
+
+            #must know the score
+            totalscore, allquestion = menghitungScoreIndikator(quiz_taker,question.specific_Competency.pk)
+
+            ###berakhir atau menuju next indikator?
+
+            # CEK APAKAH ADA NEXT INDIKATOR?
+            indikatorexist,ordernext = menghitungIndikator(question)
+
+            if queryset.exists()  and (deltaability == 0):
+                responselog = QuizLog(
+                    questionlog=question_id,
+                    sclog = quiz.id,
+                    ql_a=a,
+                    ql_b=b,
+                    ql_p=p,
+                    ql_c=c,
+                    ql_r=r,
+                    ql_ability=Hasil,
+                    ql_deltaability=deltaability,
+                    quiztaker=student
+                )
+                responselog.save()
+
+                ##save dulu kalau selesai 1 indikator
+                scorenya = ScoreDetil(
+                    specific_competency= quiz,
+                    quiz_taker = student ,
+                    desc = totalscore
+                )
+                scorenya.save()
+
+                # #CEK APAKAH ADA NEXT INDIKATOR?
+                # indikatorexist,indikatornext,indikatornow  = menghitungIndikator(question)
+
+                if indikatorexist.exists():
+                    nextIndikator = newIndikator(question.specific_Competency.base_Competency.pk,ordernext)
+                    if student.user.get_unanswered_questions(nextIndikator).exists():
+                        newquestion = indikatorNext(nextIndikator, student)
+                        return redirect('question', quiz=nextIndikator.pk, quiz_taker=student.pk, question_id=newquestion.pk)
+
+                    else:
+                        context = {
+                            'indikatornext': "soal tidak ditemukan",
+                        }
+                        return render(request, 'quiz/quiz_result2.php', context)
+                else:
+                    # Hitung score
+                    Scorenya = menghitungScoreKeseluruhan(quiz_taker)
+                    Scorenya = (round(Scorenya, 2))
+                    QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
+                    # MASUKKAN NILAI DISINI
+                    context = {
+                        'indikatornext': (Scorenya * 100),
+
+                    }
+                    return render(request, 'quiz/quiz_result.php', context)
+            else:
+                responselog = QuizLog(
+                    questionlog=question_id,
+                    sclog=quiz.id,
+                    ql_a=a,
+                    ql_b=b,
+                    ql_p=p,
+                    ql_c=c,
+                    ql_r=r,
+                    ql_ability=Hasil,
+                    ql_deltaability=deltaability,
+                    quiztaker=student
+
+                )
+
+                responselog.save()
+
+                if allquestion < 6 :
+
+                    #memberikan soal sesuai dengan kemampuan
+                    newQuestion, var = soalKemampuan(Hasil, quiz, student)
+
+                    if newQuestion.exists():
+                        # unanswered_questions = student.user.get_unanswered_questions(quiz)
+                        newquestion = newQuestion.first()
+
+                        return redirect('question', quiz=quiz.pk, quiz_taker=student.pk, question_id=newquestion.id)
+
+                    else:
+                        # question = quiz.indikator.order_by('?')
+                        # question = question.first()
+
+                        context = {
+                            'indikatornext': "SOALNYA TIDAK ADA",
+                            'vars' : var
+
+                        }
+                        return render(request, 'quiz/quiz_result2.php', context)
+
+
+                else :
+                    scorenya = ScoreDetil(
+                        specific_competency=quiz,
+                        quiz_taker=student,
+                        desc=totalscore
+                    )
+                    scorenya.save()
+
+                    if indikatorexist.exists():
+                        nextIndikator = newIndikator(question.specific_Competency.base_Competency.pk, ordernext)
+                        if student.user.get_unanswered_questions(nextIndikator).exists():
+
+                            newquestion = indikatorNext(nextIndikator, student)
+                            return redirect('question', quiz=nextIndikator.pk, quiz_taker=student.pk,
+                                            question_id=newquestion.pk)
+
+                        else:
+                            context = {
+                                'indikatornext': "SOALNYA HABIIIIIISSSSSSSSSS",
+                            }
+                            return render(request, 'quiz/quiz_result2.php', context)
+                    else:
+                        # Hitung score
+                        Scorenya = menghitungScoreKeseluruhan(quiz_taker)
+                        Scorenya = (round(Scorenya, 2))
+                        QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
+                        # MASUKKAN NILAI DISINI
+                        context = {
+                            'indikatornext': (Scorenya * 100),
+
+                        }
+                        return render(request, 'quiz/quiz_result.php', context)
+
+
 
 
 # class TakeQuiz(LoginRequiredMixin,CreateView):

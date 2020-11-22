@@ -2,5 +2,5 @@
 
 
 {% block content %}
-        {{indikatornext}}
+        Score anda {{indikatornext}}
 {% endblock %}
