@@ -49,7 +49,7 @@
                     </li>
 
                     <li>
-                        <a onclick="return confirm('Apa anda yakin? Data akan hilang?')" href="widgets.html"> <i class="menu-icon ti-email"></i>Kelas </a>
+                        <a onclick="return confirm('Apa anda yakin? Data akan hilang?')" href=""{% url 'scores' %}""> <i class="menu-icon ti-email"></i>Nilai </a>
                     </li>
                 </ul>
             </div><!-- /.navbar-collapse -->

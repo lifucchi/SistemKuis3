@@ -36,3 +36,19 @@
                 </aside>
             </div>
 {% endblock %}
+
+{% extends "quiz/base.php" %}
+
+
+{% block content %}
+    {% for score in fullscore %}
+              {% for indikatorscore in score.quiz_taker.all %}
+              <br>
+                  ini nama indikator {{indikatorscore.specific_competency_id}}
+                  <br>
+                  ini nilai perindikator {{indikatorscore.desc}}
+              {% endfor %}
+              <br>
+              ini nilai total {{score.score}}
+    {% endfor %}
+{% endblock %}

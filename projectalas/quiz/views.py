@@ -59,6 +59,38 @@ class TopicList (LoginRequiredMixin,DetailView):
             pass
         return context
 
+
+class ScoreList(LoginRequiredMixin, ListView):
+    model = Core_Competency
+    # queryset = Question.objects.all()
+    template_name = 'quiz/page-score_quiz_result.php'
+    context_object_name = 'mark_list'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        student = self.request.user
+        context['fullscore'] = QuizTaker.objects.filter(user_id = student.pk)
+
+        # context['fullscore'] = QuizTaker.objects.prefetch_related('quiz_taker')
+        # context['fullscore'] =  context['fullscore'].filter(user_id = student.pk, quiz_taker__specific_competency__base_Competency_id = self.kwargs['pk'])
+        context = {'fullscore': context['fullscore']}
+        return context
+
+
+# Scorenya = menghitungScoreKeseluruhan(quiz_taker)
+# Scorenya = (round(Scorenya, 2))
+# indikatorscore = ScoreDetil.objects.filter(quiz_taker_id=quiz_taker)
+# QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
+# # MASUKKAN NILAI DISINI
+# context = {
+#     'indikatorscore': indikatorscore,
+#     'indikatornext': (Scorenya * 100),
+#
+# }
+# return render(request, 'quiz/page-quiz_result.php', context)
+
+
+
 # class TopicList (LoginRequiredMixin,ListView):
 #     model = Topic
 #     # queryset = Question.objects.all()
@@ -516,7 +548,7 @@ def question(request,quiz,quiz_taker,question_id):
                         # Hitung score
                         Scorenya = menghitungScoreKeseluruhan(quiz_taker)
                         Scorenya = (round(Scorenya, 2))
-                        indikatorscore = objects.ilter(quiz_taker_id=quiz_taker)
+                        indikatorscore = QuizTaker.objects.filter(quiz_taker_id=quiz_taker)
                         QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
                         # MASUKKAN NILAI DISINI
                         context = {

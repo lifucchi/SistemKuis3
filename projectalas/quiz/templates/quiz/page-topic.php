@@ -16,7 +16,6 @@
                   {% else %}
                   <button onclick="location.href = '{% url 'take_quiz' pk=bc.pk %}';" type="button" class="btn btn-primary "  disabled="" style="float: right;"><i class="fa fa-star"></i>&nbsp;Mulai Kelas</button>
                   {% endif %}
-                  <button onclick="location.href = '';" type="button" class="btn btn-success "  disabled=""  style="float: left;"><i class="fa fa-magic"></i>&nbsp;Nilai</button>
                 </div>
             </div>
         </div>
