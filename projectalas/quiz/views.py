@@ -18,7 +18,7 @@ from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView
-from django.db.models import Avg
+from django.db.models import Avg, Prefetch
 
 # decorators = [never_cache, login_required]
 
@@ -60,7 +60,7 @@ class TopicList (LoginRequiredMixin,DetailView):
         return context
 
 
-class ScoreList(LoginRequiredMixin, ListView):
+class ScoreList(LoginRequiredMixin, ListView    ):
     model = Core_Competency
     # queryset = Question.objects.all()
     template_name = 'quiz/page-score_quiz_result.php'
@@ -69,11 +69,33 @@ class ScoreList(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         student = self.request.user
-        context['fullscore'] = QuizTaker.objects.filter(user_id = student.pk)
+        context['fullscore'] = QuizTaker.objects.filter(user_id = student.pk).prefetch_related(
+                Prefetch('quiz_taker', queryset=ScoreDetil.objects.filter(specific_competency__base_Competency_id = self.kwargs['pk']))
+)       .distinct()
+
+        context['bcs'] = Base_Competency.objects.get(pk = self.kwargs['pk'] )
 
         # context['fullscore'] = QuizTaker.objects.prefetch_related('quiz_taker')
         # context['fullscore'] =  context['fullscore'].filter(user_id = student.pk, quiz_taker__specific_competency__base_Competency_id = self.kwargs['pk'])
-        context = {'fullscore': context['fullscore']}
+        context = {'fullscore': context['fullscore'], 'bcs' : context['bcs'] }
+        return context
+
+class ScoreLists(LoginRequiredMixin,DetailView ):
+    model = Core_Competency
+    # queryset = Question.objects.all()
+    template_name = 'quiz/page-quiz_result.php'
+    context_object_name = 'mark_list'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        student = self.request.user
+        context['bcs'] = Base_Competency.objects.filter(pk = self.kwargs['pk'])
+
+        # context['fullscore'] = QuizTaker.objects.filter(user_id = student.pk)
+
+        # context['fullscore'] = QuizTaker.objects.prefetch_related('quiz_taker')
+        # context['fullscore'] =  context['fullscore'].filter(user_id = student.pk, quiz_taker__specific_competency__base_Competency_id = self.kwargs['pk'])
+        context = {'bcs': context['bcs']}
         return context
 
 

@@ -49,7 +49,7 @@
                     </li>
 
                     <li>
-                        <a href="{% url 'scores' %}"> <i class="menu-icon ti-email"></i>Nilai </a>
+
                     </li>
                 </ul>
             </div><!-- /.navbar-collapse -->
