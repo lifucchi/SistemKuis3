@@ -48,9 +48,7 @@
                         <a onclick="return confirm('Apa anda yakin? Data akan hilang?')" href=" {% url 'subjects'%} "><i class="menu-icon fa fa-laptop"></i>Mata Pelajaran </a>
                     </li>
 
-                    <li>
-                        <a onclick="return confirm('Apa anda yakin? Data akan hilang?')" href=""{% url 'scores' %}""> <i class="menu-icon ti-email"></i>Nilai </a>
-                    </li>
+
                 </ul>
             </div><!-- /.navbar-collapse -->
         </nav>

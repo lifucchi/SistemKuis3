@@ -19,6 +19,7 @@ from django.utils import timezone
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView
 from django.db.models import Avg, Prefetch
+from django.urls import reverse
 
 # decorators = [never_cache, login_required]
 
@@ -60,8 +61,8 @@ class TopicList (LoginRequiredMixin,DetailView):
         return context
 
 
-class ScoreList(LoginRequiredMixin, ListView    ):
-    model = Core_Competency
+class ScoresList(LoginRequiredMixin, ListView ):
+    model = QuizTaker
     # queryset = Question.objects.all()
     template_name = 'quiz/page-score_quiz_result.php'
     context_object_name = 'mark_list'
@@ -80,22 +81,21 @@ class ScoreList(LoginRequiredMixin, ListView    ):
         context = {'fullscore': context['fullscore'], 'bcs' : context['bcs'] }
         return context
 
-class ScoreLists(LoginRequiredMixin,DetailView ):
-    model = Core_Competency
+class ScoreList(LoginRequiredMixin,ListView ):
+    model = Base_Competency
     # queryset = Question.objects.all()
     template_name = 'quiz/page-quiz_result.php'
     context_object_name = 'mark_list'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        student = self.request.user
-        context['bcs'] = Base_Competency.objects.filter(pk = self.kwargs['pk'])
+        context['fullscore'] = QuizTaker.objects.filter(pk=self.kwargs['pk']).prefetch_related(
+            Prefetch('quiz_taker',
+                     queryset=ScoreDetil.objects.filter(specific_competency__base_Competency_id=self.kwargs['bc']))
+        ).distinct()
+        context['bcs'] = Base_Competency.objects.get(pk = self.kwargs['bc'] )
 
-        # context['fullscore'] = QuizTaker.objects.filter(user_id = student.pk)
-
-        # context['fullscore'] = QuizTaker.objects.prefetch_related('quiz_taker')
-        # context['fullscore'] =  context['fullscore'].filter(user_id = student.pk, quiz_taker__specific_competency__base_Competency_id = self.kwargs['pk'])
-        context = {'bcs': context['bcs']}
+        context = {'fullscore': context['fullscore'], 'bcs' : context['bcs'] }
         return context
 
 
@@ -339,15 +339,12 @@ def question(request,quiz,quiz_taker,question_id):
                     # Hitung score
                     Scorenya = menghitungScoreKeseluruhan(quiz_taker)
                     Scorenya = (round(Scorenya, 2))
-                    indikatorscore = ScoreDetil.objects.filter(quiz_taker_id = quiz_taker)
+                    # indikatorscore = ScoreDetil.objects.filter(quiz_taker_id = quiz_taker)
                     QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
                     # MASUKKAN NILAI DISINI
-                    context = {
-                        'indikatorscore' : indikatorscore,
-                        'indikatornext': (Scorenya * 100),
 
-                    }
-                    return render(request, 'quiz/page-quiz_result.php', context)
+                    # return render('quiz/page-quiz_result.php', context)
+                    return redirect(reverse('score', kwargs={'pk': quiz_taker, 'bc' : question.specific_Competency.base_Competency.pk}))
             else:
                 responselog = QuizLog(
                     questionlog=question_id,
@@ -413,15 +410,13 @@ def question(request,quiz,quiz_taker,question_id):
                         # Hitung score
                         Scorenya = menghitungScoreKeseluruhan(quiz_taker)
                         Scorenya = (round(Scorenya, 2))
-                        indikatorscore = ScoreDetil.objects.filter(quiz_taker_id=quiz_taker)
+                        # indikatorscore = ScoreDetil.objects.filter(quiz_taker_id = quiz_taker)
                         QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
                         # MASUKKAN NILAI DISINI
-                        context = {
-                            'indikatorscore': indikatorscore,
-                            'indikatornext': (Scorenya * 100),
 
-                        }
-                        return render(request, 'quiz/page-quiz_result.php', context)
+                        # return render('quiz/page-quiz_result.php', context)
+                        return redirect(reverse('score', kwargs={'pk': quiz_taker,
+                                                                 'bc': question.specific_Competency.base_Competency.pk}))
 
         else:
             grade = 0
@@ -495,15 +490,12 @@ def question(request,quiz,quiz_taker,question_id):
                     # Hitung score
                     Scorenya = menghitungScoreKeseluruhan(quiz_taker)
                     Scorenya = (round(Scorenya, 2))
-                    indikatorscore = ScoreDetil.objects.filter(quiz_taker_id = quiz_taker)
+                    # indikatorscore = ScoreDetil.objects.filter(quiz_taker_id = quiz_taker)
                     QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
                     # MASUKKAN NILAI DISINI
-                    context = {
-                        'indikatorscore' : indikatorscore,
-                        'indikatornext': (Scorenya * 100),
 
-                    }
-                    return render(request, 'quiz/page-quiz_result.php', context)
+                    # return render('quiz/page-quiz_result.php', context)
+                    return redirect(reverse('score', kwargs={'pk': quiz_taker, 'bc' : question.specific_Competency.base_Competency.pk}))
             else:
                 responselog = QuizLog(
                     questionlog=question_id,
@@ -570,13 +562,11 @@ def question(request,quiz,quiz_taker,question_id):
                         # Hitung score
                         Scorenya = menghitungScoreKeseluruhan(quiz_taker)
                         Scorenya = (round(Scorenya, 2))
-                        indikatorscore = QuizTaker.objects.filter(quiz_taker_id=quiz_taker)
+                        # indikatorscore = ScoreDetil.objects.filter(quiz_taker_id = quiz_taker)
                         QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
                         # MASUKKAN NILAI DISINI
-                        context = {
-                            'indikatorscore': indikatorscore,
-                            'indikatornext': (Scorenya * 100),
 
-                        }
-                        return render(request, 'quiz/page-quiz_result', context)
+                        # return render('quiz/page-quiz_result.php', context)
+                        return redirect(reverse('score', kwargs={'pk': quiz_taker,
+                                                                 'bc': question.specific_Competency.base_Competency.pk}))
 
