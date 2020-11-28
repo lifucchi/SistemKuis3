@@ -134,6 +134,10 @@ def question(request,quiz,quiz_taker,question_id):
 
     elif request.method == 'POST':
         choose_answer_form = ChooseAnswerForm(request.POST)
+        menghitung = selecting.Menghitung(quiz_taker, quiz, question)
+        penentuan = selecting.Penentuan()
+        pertanyaan = selecting.PemilihanKemampuan(quiz, student)
+
         #JIKA MENGISI JAWABAN
         if choose_answer_form.is_valid():
             answer = choose_answer_form.cleaned_data['answer']
@@ -159,18 +163,11 @@ def question(request,quiz,quiz_taker,question_id):
             r = grade
 
             #membuat class menghitung ?
-
             #FUZZY
-            # queryset, p,Hasil, deltaability = menghitungFuzzy(quiz_taker,quiz, a, b, c, r)
-            #pakai class
-
-            menghitung = selecting.Menghitung(quiz_taker,quiz, question)
             queryset, p, Hasil, deltaability = menghitung.menghitungFuzzy(a, b, c, r)
 
 
             #must know the score
-            # totalscore, allquestion = menghitungScoreIndikator(quiz_taker,question.specific_Competency.pk)
-            #pakai class
             totalscore, allquestion = menghitung.menghitungScoreIndikator()
             ###berakhir atau menuju next indikator?
 
@@ -204,7 +201,6 @@ def question(request,quiz,quiz_taker,question_id):
                 # #CEK APAKAH ADA NEXT INDIKATOR?
 
                 if indikatorexist.exists():
-                    penentuan = selecting.Penentuan()
                     nextIndikator = penentuan.newIndikator(question.specific_Competency.base_Competency.pk,ordernext)
                     if student.user.get_unanswered_questions(nextIndikator).exists():
                         newquestion = penentuan.indikatorNext(nextIndikator, student)
@@ -219,11 +215,9 @@ def question(request,quiz,quiz_taker,question_id):
                     # Hitung score
                     Scorenya = menghitung.menghitungScoreKeseluruhan()
                     Scorenya = (round(Scorenya, 2))
-                    # indikatorscore = ScoreDetil.objects.filter(quiz_taker_id = quiz_taker)
+
                     QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
                     # MASUKKAN NILAI DISINI
-
-                    # return render('quiz/page-quiz_result.php', context)
                     return redirect(reverse('score', kwargs={'pk': quiz_taker, 'bc' : question.specific_Competency.base_Competency.pk}))
             else:
                 responselog = QuizLog(
@@ -245,20 +239,15 @@ def question(request,quiz,quiz_taker,question_id):
                 if allquestion < 6 :
 
                     #memberikan soal sesuai dengan kemampuan
-                    pertanyaan = selecting.PemilihanKemampuan(Hasil, quiz, student)
-                    newQuestion, var = pertanyaan.soalKemampuan()
+                    newQuestion, var = pertanyaan.soalKemampuan(Hasil)
                     # newQuestion, var = soalKemampuan(Hasil, quiz, student)
 
                     if newQuestion.exists():
-                        # unanswered_questions = student.user.get_unanswered_questions(quiz)
                         newquestion = newQuestion.first()
 
                         return redirect('question', quiz=quiz.pk, quiz_taker=student.pk, question_id=newquestion.id)
 
                     else:
-                        # question = quiz.indikator.order_by('?')
-                        # question = question.first()
-
                         context = {
                             'indikatornext': "SOALNYA TIDAK ADA",
                             'vars' : var
@@ -276,7 +265,6 @@ def question(request,quiz,quiz_taker,question_id):
                     scorenya.save()
 
                     if indikatorexist.exists():
-                        penentuan = selecting.Penentuan()
                         nextIndikator = penentuan.newIndikator(question.specific_Competency.base_Competency.pk, ordernext)
                         if student.user.get_unanswered_questions(nextIndikator).exists():
 
@@ -322,12 +310,9 @@ def question(request,quiz,quiz_taker,question_id):
             r = grade
 
             #FUZZY
-            # queryset, p,Hasil, deltaability = menghitungFuzzy(quiz_taker,quiz, a, b, c, r)
-            menghitung = selecting.Menghitung(quiz_taker,quiz, question)
             queryset, p, Hasil, deltaability = menghitung.menghitungFuzzy(a, b, c, r)
 
             #must know the score
-            # totalscore, allquestion = menghitungScoreIndikator(quiz_taker,question.specific_Competency.pk)
             totalscore, allquestion = menghitung.menghitungScoreIndikator()
 
             ###berakhir atau menuju next indikator?
@@ -359,10 +344,7 @@ def question(request,quiz,quiz_taker,question_id):
                 scorenya.save()
 
                 # #CEK APAKAH ADA NEXT INDIKATOR?
-                # indikatorexist,indikatornext,indikatornow  = menghitungIndikator(question)
-
                 if indikatorexist.exists():
-                    penentuan = selecting.Penentuan()
                     nextIndikator = penentuan.newIndikator(question.specific_Competency.base_Competency.pk,ordernext)
                     if student.user.get_unanswered_questions(nextIndikator).exists():
                         newquestion = penentuan.indikatorNext(nextIndikator, student)
@@ -377,7 +359,6 @@ def question(request,quiz,quiz_taker,question_id):
                     # Hitung score
                     Scorenya = menghitung.menghitungScoreKeseluruhan()
                     Scorenya = (round(Scorenya, 2))
-                    # indikatorscore = ScoreDetil.objects.filter(quiz_taker_id = quiz_taker)
                     QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
                     # MASUKKAN NILAI DISINI
 
@@ -403,8 +384,7 @@ def question(request,quiz,quiz_taker,question_id):
                 if allquestion < 6 :
 
                     #memberikan soal sesuai dengan kemampuan
-                    pertanyaan = selecting.PemilihanKemampuan(Hasil, quiz, student)
-                    newQuestion, var = pertanyaan.soalKemampuan()
+                    newQuestion, var = pertanyaan.soalKemampuan(Hasil)
                     # newQuestion, var = soalKemampuan(Hasil, quiz, student)
 
 
@@ -435,7 +415,6 @@ def question(request,quiz,quiz_taker,question_id):
                     scorenya.save()
 
                     if indikatorexist.exists():
-                        penentuan = selecting.Penentuan()
                         nextIndikator = penentuan.newIndikator(question.specific_Competency.base_Competency.pk, ordernext)
                         if student.user.get_unanswered_questions(nextIndikator).exists():
 
