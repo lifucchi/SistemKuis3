@@ -5,10 +5,10 @@ from . import fuzzy
 
 class Menghitung:
 
-    def __init__(self ,quiz_taker, quiz, indikator):
-        # self.question = question
+    def __init__(self ,quiz_taker, quiz, question):
+        self.question = question
         self.quiz_taker = quiz_taker
-        self.indikator = indikator
+        self.indikator = question.specific_Competency.pk
         self.quiz = quiz
 
     def menghitungFuzzy(self, a, b, c, r):
@@ -36,6 +36,16 @@ class Menghitung:
                                            grade=1).count()
         totalscore = float(score) / float(allquestion)
         return totalscore, allquestion
+
+    def menghitungIndikator(self):
+        indikatornow = self.question.specific_Competency.order
+        indikatornext = int(indikatornow) + 1
+        ordernext = int(indikatornext)
+        indikatorexist = Base_Competency.objects.filter(pk=self.question.specific_Competency.base_Competency.pk,
+                                                        k_dasar__order=ordernext)
+        return indikatorexist, ordernext
+
+
 
     # def menghitungIndikator(self):
     #     indikatornow = self.question.specific_Competency.order

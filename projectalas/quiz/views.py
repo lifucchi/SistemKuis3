@@ -1,23 +1,12 @@
 from django.shortcuts import render, redirect
-from django.db.models import Q
-from django.http import  HttpResponse , request , response
-# from django.views.generic import TemplateView
-from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView , View
-# from quiz.serializers import QuizListSerializer, QuizDetailSerializer, UsersAnswerSerializer, QuizResultSerializer
 from .models import Topic,Base_Competency,ScoreDetil,Core_Competency,Specific_Competency, Question, Answer, QuizTaker, UsersAnswer , Subject, QuizLog
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
-from django.core.serializers.json import DjangoJSONEncoder
-from django.core.serializers import serialize
-from django.db import transaction
 from django.contrib import messages
-from .forms import ChooseAnswerForm, QuizTakerForm
-from . import fuzzy, selecting
-from django.utils.decorators import method_decorator
-from django.utils import timezone
+from .forms import ChooseAnswerForm
+from . import selecting
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import CreateView
 from django.db.models import Avg, Prefetch
 from django.urls import reverse
 
@@ -25,7 +14,6 @@ from django.urls import reverse
 
 class SubjectsList(LoginRequiredMixin,ListView):
     model = Subject
-
     template_name = 'quiz/page-subject.php'
     context_object_name = 'subject_list'
 
@@ -46,7 +34,6 @@ class ClassList(LoginRequiredMixin,DetailView):
 
 class TopicList (LoginRequiredMixin,DetailView):
     model = Core_Competency
-    # queryset = Question.objects.all()
     template_name = 'quiz/page-topic.php'
     context_object_name = 'topic_list'
 
@@ -63,7 +50,6 @@ class TopicList (LoginRequiredMixin,DetailView):
 
 class ScoresList(LoginRequiredMixin, ListView ):
     model = QuizTaker
-    # queryset = Question.objects.all()
     template_name = 'quiz/page-score_quiz_result.php'
     context_object_name = 'mark_list'
 
@@ -72,10 +58,8 @@ class ScoresList(LoginRequiredMixin, ListView ):
         student = self.request.user
         context['fullscore'] = QuizTaker.objects.filter(user_id = student.pk).prefetch_related(
                 Prefetch('quiz_taker', queryset=ScoreDetil.objects.filter(specific_competency__base_Competency_id = self.kwargs['pk']))
-)       .distinct()
-
+            ).distinct()
         context['bcs'] = Base_Competency.objects.get(pk = self.kwargs['pk'] )
-
         # context['fullscore'] = QuizTaker.objects.prefetch_related('quiz_taker')
         # context['fullscore'] =  context['fullscore'].filter(user_id = student.pk, quiz_taker__specific_competency__base_Competency_id = self.kwargs['pk'])
         context = {'fullscore': context['fullscore'], 'bcs' : context['bcs'] }
@@ -83,7 +67,6 @@ class ScoresList(LoginRequiredMixin, ListView ):
 
 class ScoreList(LoginRequiredMixin,ListView ):
     model = Base_Competency
-    # queryset = Question.objects.all()
     template_name = 'quiz/page-quiz_result.php'
     context_object_name = 'mark_list'
 
@@ -236,7 +219,7 @@ def question(request,quiz,quiz_taker,question_id):
             # queryset, p,Hasil, deltaability = menghitungFuzzy(quiz_taker,quiz, a, b, c, r)
             #pakai class
 
-            menghitung = selecting.Menghitung(quiz_taker,quiz, question.specific_Competency.pk )
+            menghitung = selecting.Menghitung(quiz_taker,quiz, question)
             queryset, p, Hasil, deltaability = menghitung.menghitungFuzzy(a, b, c, r)
 
 
@@ -247,7 +230,8 @@ def question(request,quiz,quiz_taker,question_id):
             ###berakhir atau menuju next indikator?
 
             # CEK APAKAH ADA NEXT INDIKATOR?
-            indikatorexist,ordernext = menghitungIndikator(question)
+            #pakaiclass
+            indikatorexist,ordernext = menghitung.menghitungIndikator()
 
             if queryset.exists()  and (deltaability == 0):
                 responselog = QuizLog(
@@ -273,7 +257,6 @@ def question(request,quiz,quiz_taker,question_id):
                 scorenya.save()
 
                 # #CEK APAKAH ADA NEXT INDIKATOR?
-                # indikatorexist,indikatornext,indikatornow  = menghitungIndikator(question)
 
                 if indikatorexist.exists():
                     nextIndikator = newIndikator(question.specific_Competency.base_Competency.pk,ordernext)
@@ -393,7 +376,7 @@ def question(request,quiz,quiz_taker,question_id):
 
             #FUZZY
             # queryset, p,Hasil, deltaability = menghitungFuzzy(quiz_taker,quiz, a, b, c, r)
-            menghitung = selecting.Menghitung(quiz_taker,quiz, question.specific_Competency.pk)
+            menghitung = selecting.Menghitung(quiz_taker,quiz, question)
             queryset, p, Hasil, deltaability = menghitung.menghitungFuzzy(a, b, c, r)
 
             #must know the score
@@ -403,7 +386,7 @@ def question(request,quiz,quiz_taker,question_id):
             ###berakhir atau menuju next indikator?
 
             # CEK APAKAH ADA NEXT INDIKATOR?
-            indikatorexist,ordernext = menghitungIndikator(question)
+            indikatorexist,ordernext = menghitung.menghitungIndikator()
 
             if queryset.exists()  and (deltaability == 0):
                 responselog = QuizLog(
