@@ -1,3 +1,53 @@
+from .models import QuizLog
+from . import fuzzy
+
+class MenghitungFuzzy:
+
+    def __init__(self ,quiz_taker, quiz):
+        # self.question = question
+        self.quiz_taker = quiz_taker
+        # self.indikator = indikator
+        self.quiz = quiz
+
+    def menghitungFuzzy(self, a, b, c, r):
+        queryset = QuizLog.objects.filter(quiztaker_id=self.quiz_taker, sclog=self.quiz.id)
+        if queryset.exists():
+            quizlogs = QuizLog.objects.filter(quiztaker_id=self.quiz_taker).last()
+            bability = quizlogs.ql_ability
+            p = c + (1 - c) * ((2.718 ** (1.7 * a * (bability - b))) / (1 + 2.718 ** (1.7 * a * (bability - b))))
+            ################fuzzy#########################
+            hasil = fuzzy.Mfuzzy(a, b, p, r)
+            Hasil = hasil.fuzzy()
+            deltaability = Hasil - bability
+        else:
+            p = 0.5
+            hasil = fuzzy.Mfuzzy(a, b, p, r)
+            Hasil = hasil.fuzzy()
+            deltaability = 0
+
+        return queryset, p, Hasil, deltaability
+
+    # def menghitungIndikator(self):
+    #     indikatornow = self.question.specific_Competency.order
+    #     indikatornext = int(indikatornow) + 1
+    #     ordernext = int(indikatornext)
+    #     indikatorexist = Base_Competency.objects.filter(pk=self.question.specific_Competency.base_Competency.pk,
+    #                                                     k_dasar__order=ordernext)
+    #     return indikatorexist, ordernext
+    #
+    # def menghitungScoreIndikator(self):
+    #     allquestion = UsersAnswer.objects.filter(quiztaker_id=self.quiz_taker,
+    #                                              question__specific_Competency__pk=self.indikator).count()
+    #     score = UsersAnswer.objects.filter(quiztaker_id=self.quiz_taker, question__specific_Competency__pk=self.indikator,
+    #                                        grade=1).count()
+    #     totalscore = float(score) / float(allquestion)
+    #     return totalscore, allquestion
+    #
+    # def menghitungScoreKeseluruhan(self):
+    #     scoreDetails = ScoreDetil.objects.filter(quiz_taker_id=self.quiz_taker).aggregate(Avg('desc'))['desc__avg']
+    #     return float(scoreDetails)
+
+
 
 class PemilihanKemampuan:
     def __init__(self, Hasil, quiz,student):

@@ -181,26 +181,6 @@ def menghitungScoreKeseluruhan(quiz_taker):
     scoreDetails = ScoreDetil.objects.filter(quiz_taker_id=quiz_taker).aggregate(Avg('desc'))['desc__avg']
     return float(scoreDetails)
 
-def menghitungFuzzy(quiz_taker,quiz,a,b,c,r):
-    queryset = QuizLog.objects.filter(quiztaker_id=quiz_taker, sclog = quiz.id)
-    # detilskor = ScoreDetil.objects.filter(quiz_taker_id=quiz_taker, specific_competency_id = quiz.pk)
-
-    if queryset.exists() :
-        quizlogs = QuizLog.objects.filter(quiztaker_id=quiz_taker).last()
-        bability = quizlogs.ql_ability
-        p = c + (1 - c) * ((2.718 ** (1.7 * a * (bability - b))) / (1 + 2.718 ** (1.7 * a * (bability - b))))
-        ################fuzzy#########################
-        hasil = fuzzy.Mfuzzy(a, b, p, r)
-        Hasil = hasil.fuzzy()
-        deltaability = Hasil - bability
-    else:
-        p = 0.5
-        hasil = fuzzy.Mfuzzy(a, b, p, r)
-        Hasil = hasil.fuzzy()
-        deltaability = 0
-
-    return queryset, p,Hasil, deltaability
-
 def indikatorNext(quiz, student):
     unanswered_questions = student.user.get_unanswered_questions(quiz)
     unanswered_questions = unanswered_questions.filter(level__lte=2,level__gte=-1)
@@ -211,7 +191,7 @@ def newIndikator(indikatorexist,ordernext):
     nextIndikator = get_object_or_404(Specific_Competency, order = ordernext , base_Competency_id = indikatorexist )
     return nextIndikator
 
-
+##################################################################################################################################
 def question(request,quiz,quiz_taker,question_id):
     student = QuizTaker.objects.get(pk=quiz_taker)
     question = Question.objects.get(pk=question_id)
@@ -256,8 +236,15 @@ def question(request,quiz,quiz_taker,question_id):
             b = question.level
             r = grade
 
+            #membuat class menghitung ?
+
             #FUZZY
-            queryset, p,Hasil, deltaability = menghitungFuzzy(quiz_taker,quiz, a, b, c, r)
+            # queryset, p,Hasil, deltaability = menghitungFuzzy(quiz_taker,quiz, a, b, c, r)
+            #pakai class
+
+            menghitungfuzzy = selecting.MenghitungFuzzy(quiz_taker,quiz)
+            queryset, p, Hasil, deltaability = menghitungfuzzy.menghitungFuzzy(a, b, c, r)
+
 
             #must know the score
             totalscore, allquestion = menghitungScoreIndikator(quiz_taker,question.specific_Competency.pk)
@@ -410,7 +397,9 @@ def question(request,quiz,quiz_taker,question_id):
             r = grade
 
             #FUZZY
-            queryset, p,Hasil, deltaability = menghitungFuzzy(quiz_taker,quiz, a, b, c, r)
+            # queryset, p,Hasil, deltaability = menghitungFuzzy(quiz_taker,quiz, a, b, c, r)
+            menghitungfuzzy = selecting.MenghitungFuzzy(quiz_taker,quiz)
+            queryset, p, Hasil, deltaability = menghitungfuzzy.menghitungFuzzy(a, b, c, r)
 
             #must know the score
             totalscore, allquestion = menghitungScoreIndikator(quiz_taker,question.specific_Competency.pk)
