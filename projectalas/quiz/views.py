@@ -171,12 +171,6 @@ def menghitungIndikator(question):
     indikatorexist = Base_Competency.objects.filter(pk=question.specific_Competency.base_Competency.pk,  k_dasar__order=ordernext)
     return indikatorexist,ordernext
 
-def menghitungScoreIndikator(quiz_taker,indikator):
-    allquestion = UsersAnswer.objects.filter(quiztaker_id=quiz_taker, question__specific_Competency__pk = indikator ).count()
-    score = UsersAnswer.objects.filter(quiztaker_id=quiz_taker, question__specific_Competency__pk = indikator, grade=1).count()
-    totalscore = float(score) / float(allquestion)
-    return totalscore, allquestion
-
 def menghitungScoreKeseluruhan(quiz_taker):
     scoreDetails = ScoreDetil.objects.filter(quiz_taker_id=quiz_taker).aggregate(Avg('desc'))['desc__avg']
     return float(scoreDetails)
@@ -242,13 +236,14 @@ def question(request,quiz,quiz_taker,question_id):
             # queryset, p,Hasil, deltaability = menghitungFuzzy(quiz_taker,quiz, a, b, c, r)
             #pakai class
 
-            menghitungfuzzy = selecting.MenghitungFuzzy(quiz_taker,quiz)
-            queryset, p, Hasil, deltaability = menghitungfuzzy.menghitungFuzzy(a, b, c, r)
+            menghitung = selecting.Menghitung(quiz_taker,quiz, question.specific_Competency.pk )
+            queryset, p, Hasil, deltaability = menghitung.menghitungFuzzy(a, b, c, r)
 
 
             #must know the score
-            totalscore, allquestion = menghitungScoreIndikator(quiz_taker,question.specific_Competency.pk)
-
+            # totalscore, allquestion = menghitungScoreIndikator(quiz_taker,question.specific_Competency.pk)
+            #pakai class
+            totalscore, allquestion = menghitung.menghitungScoreIndikator()
             ###berakhir atau menuju next indikator?
 
             # CEK APAKAH ADA NEXT INDIKATOR?
@@ -398,11 +393,12 @@ def question(request,quiz,quiz_taker,question_id):
 
             #FUZZY
             # queryset, p,Hasil, deltaability = menghitungFuzzy(quiz_taker,quiz, a, b, c, r)
-            menghitungfuzzy = selecting.MenghitungFuzzy(quiz_taker,quiz)
-            queryset, p, Hasil, deltaability = menghitungfuzzy.menghitungFuzzy(a, b, c, r)
+            menghitung = selecting.Menghitung(quiz_taker,quiz, question.specific_Competency.pk)
+            queryset, p, Hasil, deltaability = menghitung.menghitungFuzzy(a, b, c, r)
 
             #must know the score
-            totalscore, allquestion = menghitungScoreIndikator(quiz_taker,question.specific_Competency.pk)
+            # totalscore, allquestion = menghitungScoreIndikator(quiz_taker,question.specific_Competency.pk)
+            totalscore, allquestion = menghitung.menghitungScoreIndikator()
 
             ###berakhir atau menuju next indikator?
 
