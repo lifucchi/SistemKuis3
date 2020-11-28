@@ -47,7 +47,6 @@ class TopicList (LoginRequiredMixin,DetailView):
             pass
         return context
 
-
 class ScoresList(LoginRequiredMixin, ListView ):
     model = QuizTaker
     template_name = 'quiz/page-score_quiz_result.php'
@@ -82,39 +81,6 @@ class ScoreList(LoginRequiredMixin,ListView ):
         return context
 
 
-# Scorenya = menghitungScoreKeseluruhan(quiz_taker)
-# Scorenya = (round(Scorenya, 2))
-# indikatorscore = ScoreDetil.objects.filter(quiz_taker_id=quiz_taker)
-# QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
-# # MASUKKAN NILAI DISINI
-# context = {
-#     'indikatorscore': indikatorscore,
-#     'indikatornext': (Scorenya * 100),
-#
-# }
-# return render(request, 'quiz/page-quiz_result.php', context)
-
-
-
-# class TopicList (LoginRequiredMixin,ListView):
-#     model = Topic
-#     # queryset = Question.objects.all()
-#     template_name = 'quiz/class-page.php'
-#     context_object_name = 'topic_list'
-#
-#     def get_queryset(self):
-#         queryset = super(TopicList, self).get_queryset()
-#         return queryset
-
-# @login_required()
-# def topicDetail (request, slug):
-#     topic = get_object_or_404(Topic, slug=slug)
-#     bc = Base_Competency.objects.filter(topic=topic)
-#     bc = bc.filter(roll_out=1)
-#     return render(request, 'quiz/class-topic-page.php', {
-#         'topics': topic,
-#         'bcs': bc})
-
 class TopicDetailView(LoginRequiredMixin,DetailView):
     model = Topic
     template_name = 'quiz/class-topic-page.php'
@@ -146,27 +112,6 @@ def take_quiz(request, pk):
         return redirect('topics', pk = pk)
 
 ##penentuan soal
-
-def menghitungIndikator(question):
-    indikatornow = question.specific_Competency.order
-    indikatornext = int(indikatornow) + 1
-    ordernext = int(indikatornext)
-    indikatorexist = Base_Competency.objects.filter(pk=question.specific_Competency.base_Competency.pk,  k_dasar__order=ordernext)
-    return indikatorexist,ordernext
-
-def menghitungScoreKeseluruhan(quiz_taker):
-    scoreDetails = ScoreDetil.objects.filter(quiz_taker_id=quiz_taker).aggregate(Avg('desc'))['desc__avg']
-    return float(scoreDetails)
-
-def indikatorNext(quiz, student):
-    unanswered_questions = student.user.get_unanswered_questions(quiz)
-    unanswered_questions = unanswered_questions.filter(level__lte=2,level__gte=-1)
-    question = unanswered_questions.first()
-    return question
-
-def newIndikator(indikatorexist,ordernext):
-    nextIndikator = get_object_or_404(Specific_Competency, order = ordernext , base_Competency_id = indikatorexist )
-    return nextIndikator
 
 ##################################################################################################################################
 def question(request,quiz,quiz_taker,question_id):
@@ -259,9 +204,10 @@ def question(request,quiz,quiz_taker,question_id):
                 # #CEK APAKAH ADA NEXT INDIKATOR?
 
                 if indikatorexist.exists():
-                    nextIndikator = newIndikator(question.specific_Competency.base_Competency.pk,ordernext)
+                    penentuan = selecting.Penentuan()
+                    nextIndikator = penentuan.newIndikator(question.specific_Competency.base_Competency.pk,ordernext)
                     if student.user.get_unanswered_questions(nextIndikator).exists():
-                        newquestion = indikatorNext(nextIndikator, student)
+                        newquestion = penentuan.indikatorNext(nextIndikator, student)
                         return redirect('question', quiz=nextIndikator.pk, quiz_taker=student.pk, question_id=newquestion.pk)
 
                     else:
@@ -271,7 +217,7 @@ def question(request,quiz,quiz_taker,question_id):
                         return render(request, 'quiz/quiz_result2.php', context)
                 else:
                     # Hitung score
-                    Scorenya = menghitungScoreKeseluruhan(quiz_taker)
+                    Scorenya = menghitung.menghitungScoreKeseluruhan()
                     Scorenya = (round(Scorenya, 2))
                     # indikatorscore = ScoreDetil.objects.filter(quiz_taker_id = quiz_taker)
                     QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
@@ -330,10 +276,11 @@ def question(request,quiz,quiz_taker,question_id):
                     scorenya.save()
 
                     if indikatorexist.exists():
-                        nextIndikator = newIndikator(question.specific_Competency.base_Competency.pk, ordernext)
+                        penentuan = selecting.Penentuan()
+                        nextIndikator = penentuan.newIndikator(question.specific_Competency.base_Competency.pk, ordernext)
                         if student.user.get_unanswered_questions(nextIndikator).exists():
 
-                            newquestion = indikatorNext(nextIndikator, student)
+                            newquestion = penentuan.indikatorNext(nextIndikator, student)
                             return redirect('question', quiz=nextIndikator.pk, quiz_taker=student.pk,
                                             question_id=newquestion.pk)
 
@@ -344,7 +291,7 @@ def question(request,quiz,quiz_taker,question_id):
                             return render(request, 'quiz/quiz_result2.php', context)
                     else:
                         # Hitung score
-                        Scorenya = menghitungScoreKeseluruhan(quiz_taker)
+                        Scorenya = menghitung.menghitungScoreKeseluruhan()
                         Scorenya = (round(Scorenya, 2))
                         # indikatorscore = ScoreDetil.objects.filter(quiz_taker_id = quiz_taker)
                         QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
@@ -415,9 +362,10 @@ def question(request,quiz,quiz_taker,question_id):
                 # indikatorexist,indikatornext,indikatornow  = menghitungIndikator(question)
 
                 if indikatorexist.exists():
-                    nextIndikator = newIndikator(question.specific_Competency.base_Competency.pk,ordernext)
+                    penentuan = selecting.Penentuan()
+                    nextIndikator = penentuan.newIndikator(question.specific_Competency.base_Competency.pk,ordernext)
                     if student.user.get_unanswered_questions(nextIndikator).exists():
-                        newquestion = indikatorNext(nextIndikator, student)
+                        newquestion = penentuan.indikatorNext(nextIndikator, student)
                         return redirect('question', quiz=nextIndikator.pk, quiz_taker=student.pk, question_id=newquestion.pk)
 
                     else:
@@ -427,7 +375,7 @@ def question(request,quiz,quiz_taker,question_id):
                         return render(request, 'quiz/quiz_result2.php', context)
                 else:
                     # Hitung score
-                    Scorenya = menghitungScoreKeseluruhan(quiz_taker)
+                    Scorenya = menghitung.menghitungScoreKeseluruhan()
                     Scorenya = (round(Scorenya, 2))
                     # indikatorscore = ScoreDetil.objects.filter(quiz_taker_id = quiz_taker)
                     QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
@@ -487,10 +435,11 @@ def question(request,quiz,quiz_taker,question_id):
                     scorenya.save()
 
                     if indikatorexist.exists():
-                        nextIndikator = newIndikator(question.specific_Competency.base_Competency.pk, ordernext)
+                        penentuan = selecting.Penentuan()
+                        nextIndikator = penentuan.newIndikator(question.specific_Competency.base_Competency.pk, ordernext)
                         if student.user.get_unanswered_questions(nextIndikator).exists():
 
-                            newquestion = indikatorNext(nextIndikator, student)
+                            newquestion = penentuan.indikatorNext(nextIndikator, student)
                             return redirect('question', quiz=nextIndikator.pk, quiz_taker=student.pk,
                                             question_id=newquestion.pk)
 
@@ -502,7 +451,7 @@ def question(request,quiz,quiz_taker,question_id):
                             return render(request, 'quiz/quiz_result2.php', context)
                     else:
                         # Hitung score
-                        Scorenya = menghitungScoreKeseluruhan(quiz_taker)
+                        Scorenya = menghitung.menghitungScoreKeseluruhan()
                         Scorenya = (round(Scorenya, 2))
                         # indikatorscore = ScoreDetil.objects.filter(quiz_taker_id = quiz_taker)
                         QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)

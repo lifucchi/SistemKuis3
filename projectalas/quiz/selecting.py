@@ -1,10 +1,21 @@
 from .models import Topic,Base_Competency,ScoreDetil,Core_Competency,Specific_Competency, Question, Answer, QuizTaker, UsersAnswer , Subject, QuizLog
-
+from django.db.models import Avg, Prefetch
 from . import fuzzy
+from django.shortcuts import get_object_or_404
 
+
+class Penentuan:
+    def indikatorNext(self,quiz, student):
+        unanswered_questions = student.user.get_unanswered_questions(quiz)
+        unanswered_questions = unanswered_questions.filter(level__lte=2, level__gte=-1)
+        question = unanswered_questions.first()
+        return question
+
+    def newIndikator(self,indikatorexist, ordernext):
+        nextIndikator = get_object_or_404(Specific_Competency, order=ordernext, base_Competency_id=indikatorexist)
+        return nextIndikator
 
 class Menghitung:
-
     def __init__(self ,quiz_taker, quiz, question):
         self.question = question
         self.quiz_taker = quiz_taker
@@ -45,22 +56,9 @@ class Menghitung:
                                                         k_dasar__order=ordernext)
         return indikatorexist, ordernext
 
-
-
-    # def menghitungIndikator(self):
-    #     indikatornow = self.question.specific_Competency.order
-    #     indikatornext = int(indikatornow) + 1
-    #     ordernext = int(indikatornext)
-    #     indikatorexist = Base_Competency.objects.filter(pk=self.question.specific_Competency.base_Competency.pk,
-    #                                                     k_dasar__order=ordernext)
-    #     return indikatorexist, ordernext
-    #
-
-    #
-    # def menghitungScoreKeseluruhan(self):
-    #     scoreDetails = ScoreDetil.objects.filter(quiz_taker_id=self.quiz_taker).aggregate(Avg('desc'))['desc__avg']
-    #     return float(scoreDetails)
-
+    def menghitungScoreKeseluruhan(self):
+        scoreDetails = ScoreDetil.objects.filter(quiz_taker_id=self.quiz_taker).aggregate(Avg('desc'))['desc__avg']
+        return float(scoreDetails)
 
 
 class PemilihanKemampuan:
