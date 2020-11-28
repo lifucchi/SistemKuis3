@@ -46,6 +46,8 @@ class Menghitung:
         score = UsersAnswer.objects.filter(quiztaker_id=self.quiz_taker, question__specific_Competency__pk=self.indikator,
                                            grade=1).count()
         totalscore = (float(score) / float(allquestion)) *100
+        totalscore = (round(totalscore, 0))
+
         return totalscore, allquestion
 
     def menghitungIndikator(self):
