@@ -60,8 +60,8 @@
         <header id="header" class="header">
             <div class="top-left">
                 <div class="navbar-header">
-                    <a onclick="return confirm('Apa anda yakin? Data akan hilang?')" class="navbar-brand" href="./">SistemKuis</a>
-                    <!-- <a class="navbar-brand" href="./">  SistemKuis</a> -->
+                    <a onclick="return confirm('Apa anda yakin? Data akan hilang?')" class="navbar-brand" href="">SistemKuis</a>
+                    <!-- <a class="navbar-brand" href="">  SistemKuis</a> -->
                     <a id="menuToggle" class="menutoggle"><i class="fa fa-bars"></i></a>
 
                 </div>
