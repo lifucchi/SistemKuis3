@@ -13,6 +13,10 @@ class Subject(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = 'Mata Pelajaran'
+        verbose_name_plural = "Mata Pelajaran"
+
     def natural_key(self):
         return self.name
 
@@ -23,6 +27,11 @@ class Core_Competency(models.Model):
     desc = models.CharField(max_length=100)
     classes = models.CharField(max_length=100)
 
+    class Meta:
+        verbose_name = "Kompetensi Inti"
+        verbose_name_plural = "Kompetensi Inti"
+
+
     def __str__(self):
         return self.classes
 
@@ -32,6 +41,10 @@ class Core_Competency(models.Model):
 class Topic(models.Model):
     name = models.CharField(max_length=400)
     slug = models.SlugField(blank=True)
+
+    class Meta:
+        verbose_name = "Topik"
+        verbose_name_plural = "Topik"
 
     def __str__(self):
         return self.name
@@ -46,6 +59,10 @@ class Base_Competency(models.Model):
     name = models.CharField(max_length=400)
     ability = models.CharField(max_length=100)
 
+    class Meta:
+        verbose_name = "Kompetensi Dasar"
+        verbose_name_plural = "Kompetensi Dasar"
+
     def __str__(self):
         return self.name
 
@@ -57,14 +74,12 @@ class Specific_Competency(models.Model):
     name = models.CharField(max_length=400)
     description = models.CharField(max_length=70)
     order = models.IntegerField(default=0)
-    # image = models.ImageField()
-    # slug = models.SlugField(blank=True)
-    # roll_out = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['timestamp',]
-        verbose_name_plural = "Specific_Competencies"
+        verbose_name = "Indikator"
+        verbose_name_plural = "Indikator"
 
     def __str__(self):
         return self.name
@@ -73,18 +88,17 @@ class Specific_Competency(models.Model):
         return self.name
 
 class Question(models.Model):
-    # specific_Competency = models.ForeignKey(Specific_Competency, on_delete=models.CASCADE)
-    # specific_Competency = models.ManyToManyField(Specific_Competency)
-    # specific_Competency = models.ManyToManyField(Specific_Competency, through= question)
     specific_Competency = models.ForeignKey(Specific_Competency, on_delete=models.CASCADE, related_name="indikator")
     label = models.CharField(max_length=200)
     level = models.FloatField(default=0)
     discrimination = models.FloatField(default=0)
-    # c_prob = models.FloatField(default=0)
-    # order = models.IntegerField(default=0)
 
     def __str__(self):
         return self.label
+
+    class Meta:
+        verbose_name = "Pertanyaan"
+        verbose_name_plural = "Pertanyaan"
 
     def natural_key(self):
         return self.name
@@ -97,27 +111,27 @@ class Answer(models.Model):
     def __str__(self):
         return self.label
 
+    class Meta:
+        verbose_name = "Jawaban Pertanyaan"
+        verbose_name_plural = "Jawaban Pertanyaan"
+
     def natural_key(self):
         return self.label
 
 class QuizTaker(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE , related_name="murid")
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
     score = models.FloatField(default=0)
     completed = models.BooleanField(default=False)
     date_finished = models.DateTimeField(null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     recommendation = models.CharField(max_length=100)
 
-    # def get_unanswered_questions(self, quiz):
-    #     answered_questions = self.quiz_answers \
-    #         .filter(question__specific_Competency=quiz) \
-    #         .values_list('question__id ', flat=True)
-    #     questions = quiz.indikator.exclude(pk__in=answered_questions).order_by('label')
-    #     return questions
-
     def __str__(self):
         return self.user.username
+
+    class Meta:
+        verbose_name = "Pengambil Kuis"
+        verbose_name_plural = "Pengambil Kuis"
 
 
     def natural_key(self):
@@ -134,6 +148,10 @@ class ScoreDetil(models.Model):
     def __str__(self):
         return self.desc
 
+    class Meta:
+        verbose_name = "Skor per Indikator"
+        verbose_name_plural = "Skor per Indikator"
+
     def natural_key(self):
         return self.desc
 
@@ -144,6 +162,11 @@ class UsersAnswer(models.Model):
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True, related_name='+')
     timestamp = models.DateTimeField(auto_now_add=True)
     grade = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name = "Jawaban Pengguna"
+        verbose_name_plural = "Jawaban Pengguna"
+
     def __str__(self):
         return self.question.label
 
