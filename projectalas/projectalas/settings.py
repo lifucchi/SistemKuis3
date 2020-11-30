@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+import django_heroku
+from decouple import config
+import dj_database_url
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,7 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 't-$q4ut32_*@8@^wta17xhi1(0$vq-c6zr_&jf(%upe%&kc7b!'
+SECRET_KEY = config('SECRET_KEY')
+# SECRET_KEY = 't-$q4ut32_*@8@^wta17xhi1(0$vq-c6zr_&jf(%upe%&kc7b!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -49,6 +53,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -78,6 +83,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'projectalas.wsgi.application'
 
 
+
+
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -103,6 +110,21 @@ DATABASES={
 	}
 }
 
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'quizalas_ta_quiz',
+#         'USER' : 'quizalas_root',
+#         'PASSWORD' : 'semangat45',
+#         'HOST' : 'quizalas.com',
+#         'PORT' : '3306',
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#             'charset': 'utf8mb4',
+#         }
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -146,9 +168,15 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = '/matapelajaran'
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'login'
 STATICFILES_DIRS = [ os.path.join(BASE_DIR, 'static')]
+STATICFILES_STORAGE= 'whitenoise.storage.CompressedManifestStaticFilesStora'
+
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
+
+
+django_heroku.settings(locals())
