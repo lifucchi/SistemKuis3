@@ -11,7 +11,6 @@ class UserRegisterForm(UserCreationForm):
         model = get_user_model()
         fields = ['username', 'first_name', 'last_name', 'classes' ,'email', 'password1', 'password2']
 
-
 class UserCreationForm(UserCreationForm):
     # User = get_user_model()
     class Meta(UserCreationForm):
