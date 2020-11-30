@@ -9,7 +9,7 @@ class UserRegisterForm(UserCreationForm):
 
     class Meta:
         model = get_user_model()
-        fields = ['username', 'first_name', 'last_name' ,'email', 'password1', 'password2']
+        fields = ['username', 'first_name', 'last_name', 'classes' ,'email', 'password1', 'password2']
 
 
 class UserCreationForm(UserCreationForm):
