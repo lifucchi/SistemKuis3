@@ -16,7 +16,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     first_name = models.CharField(_('nama depan'), max_length=100)
     last_name = models.CharField(_('nama belakang'), max_length=100)
-    classes = models.CharField(_('kelas'), max_length=100 , default=None)
+    classes = models.CharField(_('kelas'), max_length=100 , blank=True)
 
 
     USERNAME_FIELD = 'username'
