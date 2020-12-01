@@ -92,6 +92,7 @@ class Question(models.Model):
     label = models.CharField(max_length=200)
     level = models.FloatField(default=0)
     discrimination = models.FloatField(default=0)
+    code = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
         return self.label
