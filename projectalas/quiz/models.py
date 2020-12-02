@@ -8,7 +8,7 @@ from django.conf import settings
 # Create your models here.
 
 class Subject(models.Model):
-    name = models.CharField(max_length=400)
+    name = models.CharField(max_length=200)
 
     def __str__(self):
         return self.name
@@ -25,7 +25,7 @@ class Core_Competency(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="mapel")
     name = models.CharField(max_length=400)
     desc = models.CharField(max_length=100)
-    classes = models.CharField(max_length=100)
+    classes = models.CharField(max_length=10)
 
     class Meta:
         verbose_name = "Kompetensi Inti"
@@ -74,10 +74,9 @@ class Specific_Competency(models.Model):
     name = models.CharField(max_length=400)
     description = models.CharField(max_length=70)
     order = models.IntegerField(default=0)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    # timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['timestamp',]
         verbose_name = "Indikator"
         verbose_name_plural = "Indikator"
 
@@ -159,7 +158,7 @@ class ScoreDetil(models.Model):
 
 class UsersAnswer(models.Model):
     quiztaker = models.ForeignKey(QuizTaker, on_delete=models.CASCADE, related_name="quiz_answers")
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='+')
+    # question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='+')
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True, related_name='+')
     timestamp = models.DateTimeField(auto_now_add=True)
     grade = models.IntegerField(default=0)

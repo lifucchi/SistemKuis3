@@ -9,7 +9,7 @@ from . import selecting
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Avg, Prefetch
 from django.urls import reverse
-
+from django.utils import timezone
 # decorators = [never_cache, login_required]
 
 class SubjectsList(LoginRequiredMixin,ListView):
@@ -99,7 +99,7 @@ class TopicList (LoginRequiredMixin,DetailView):
 
                 aresponse = UsersAnswer(
                     quiztaker=student,
-                    question=question,
+                    # question=question,
                     answer=answer,
                     grade=grade,
                 )
@@ -169,6 +169,8 @@ class TopicList (LoginRequiredMixin,DetailView):
                         Scorenya = (round(Scorenya, 2))
 
                         QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
+                        QuizTaker.objects.filter(pk=quiz_taker).update(date_finished=timezone.now())
+
                         # MASUKKAN NILAI DISINI
                         return redirect(reverse('score', kwargs={'pk': quiz_taker,
                                                                  'bc': question.specific_Competency.base_Competency.pk}))
@@ -236,6 +238,8 @@ class TopicList (LoginRequiredMixin,DetailView):
                             Scorenya = menghitung.menghitungScoreKeseluruhan()
                             Scorenya = (round(Scorenya, 2))
                             QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
+                            QuizTaker.objects.filter(pk=quiz_taker).update(date_finished=timezone.now())
+
                             # MASUKKAN NILAI DISINI
 
                             # return render('quiz/page-quiz_result.php', context)
@@ -247,7 +251,7 @@ class TopicList (LoginRequiredMixin,DetailView):
 
                 aresponse = UsersAnswer(
                     quiztaker=student,
-                    question=question,
+                    # question=question,
                     answer=None,
                     grade=grade,
                 )
@@ -314,6 +318,8 @@ class TopicList (LoginRequiredMixin,DetailView):
                         Scorenya = menghitung.menghitungScoreKeseluruhan()
                         Scorenya = (round(Scorenya, 2))
                         QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
+                        QuizTaker.objects.filter(pk=quiz_taker).update(date_finished=timezone.now())
+
                         # MASUKKAN NILAI DISINI
                         return redirect(reverse('score', kwargs={'pk': quiz_taker,
                                                                  'bc': question.specific_Competency.base_Competency.pk}))
@@ -386,6 +392,8 @@ class TopicList (LoginRequiredMixin,DetailView):
                             Scorenya = menghitung.menghitungScoreKeseluruhan()
                             Scorenya = (round(Scorenya, 2))
                             QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
+                            QuizTaker.objects.filter(pk=quiz_taker).update(date_finished=timezone.now())
+
                             # MASUKKAN NILAI DISINI
                             return redirect(reverse('score', kwargs={'pk': quiz_taker,
                                                                      'bc': question.specific_Competency.base_Competency.pk}))

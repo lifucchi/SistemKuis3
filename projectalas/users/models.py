@@ -26,8 +26,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_unanswered_questions(self, quiz):
         answered_questions = self.murid \
-            .filter(quiz_answers__question__specific_Competency=quiz) \
-            .values_list('quiz_answers__question__id', flat=True)
+            .filter(quiz_answers__answer__question__specific_Competency=quiz) \
+            .values_list('quiz_answers__answer__question__id', flat=True)
         questions = quiz.indikator.exclude(pk__in=answered_questions)
         return questions
 
