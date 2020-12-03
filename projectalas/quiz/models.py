@@ -57,7 +57,7 @@ class Base_Competency(models.Model):
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name="topictopic")
     roll_out = models.BooleanField(default=False)
     name = models.CharField(max_length=400)
-    ability = models.CharField(max_length=100)
+    ability = models.CharField(max_length=100, blank = True)
 
     class Meta:
         verbose_name = "Kompetensi Dasar"
@@ -72,7 +72,7 @@ class Base_Competency(models.Model):
 class Specific_Competency(models.Model):
     base_Competency = models.ForeignKey(Base_Competency, on_delete=models.CASCADE , related_name="k_dasar")
     name = models.CharField(max_length=400)
-    description = models.CharField(max_length=70)
+    description = models.CharField(max_length=70,blank=True)
     order = models.IntegerField(default=0)
     # timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -124,7 +124,7 @@ class QuizTaker(models.Model):
     completed = models.BooleanField(default=False)
     date_finished = models.DateTimeField(null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    recommendation = models.CharField(max_length=100)
+    recommendation = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return self.user.username
