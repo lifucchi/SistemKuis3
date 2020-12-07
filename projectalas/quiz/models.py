@@ -74,6 +74,8 @@ class Specific_Competency(models.Model):
     name = models.CharField(max_length=400)
     description = models.CharField(max_length=70,blank=True)
     order = models.IntegerField(default=0)
+    roll_out = models.BooleanField(default=False)
+
     # timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:

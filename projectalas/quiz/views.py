@@ -51,7 +51,7 @@ class TopicList (LoginRequiredMixin,DetailView):
         student = request.user
         # messages.success(request, ('masuk'))
         try:
-            quiz = Specific_Competency.objects.filter(base_Competency_id=pk).order_by('order').first()
+            quiz = Specific_Competency.objects.filter(base_Competency_id=pk, roll_out = 1).order_by('order').first()
             obj = QuizTaker.objects.create(user=student)
             quiz_taker = obj.pk
             # question = quiz.indikator
@@ -123,7 +123,6 @@ class TopicList (LoginRequiredMixin,DetailView):
 
                 # CEK APAKAH ADA NEXT INDIKATOR?
                 # pakaiclass
-                indikatorexist, ordernext = menghitung.menghitungIndikator()
 
                 if queryset.exists() and (deltaability == 0):
                     responselog = QuizLog(
@@ -149,6 +148,7 @@ class TopicList (LoginRequiredMixin,DetailView):
                     scorenya.save()
 
                     # #CEK APAKAH ADA NEXT INDIKATOR?
+                    indikatorexist, ordernext = menghitung.menghitungIndikator()
 
                     if indikatorexist.exists():
                         nextIndikator = penentuan.newIndikator(question.specific_Competency.base_Competency.pk,
@@ -219,6 +219,8 @@ class TopicList (LoginRequiredMixin,DetailView):
                         )
                         scorenya.save()
 
+                        indikatorexist, ordernext = menghitung.menghitungIndikator()
+
                         if indikatorexist.exists():
                             nextIndikator = penentuan.newIndikator(question.specific_Competency.base_Competency.pk,
                                                                    ordernext)
@@ -274,7 +276,7 @@ class TopicList (LoginRequiredMixin,DetailView):
                 ###berakhir atau menuju next indikator?
 
                 # CEK APAKAH ADA NEXT INDIKATOR?
-                indikatorexist, ordernext = menghitung.menghitungIndikator()
+
 
                 if queryset.exists() and (deltaability == 0):
                     responselog = QuizLog(
@@ -300,6 +302,8 @@ class TopicList (LoginRequiredMixin,DetailView):
                     scorenya.save()
 
                     # #CEK APAKAH ADA NEXT INDIKATOR?
+                    indikatorexist, ordernext = menghitung.menghitungIndikator()
+
                     if indikatorexist.exists():
                         nextIndikator = penentuan.newIndikator(question.specific_Competency.base_Competency.pk,
                                                                ordernext)
@@ -371,6 +375,8 @@ class TopicList (LoginRequiredMixin,DetailView):
                             desc=totalscore
                         )
                         scorenya.save()
+
+                        indikatorexist, ordernext = menghitung.menghitungIndikator()
 
                         if indikatorexist.exists():
                             nextIndikator = penentuan.newIndikator(question.specific_Competency.base_Competency.pk,

@@ -50,7 +50,37 @@ class Menghitung:
 
         return totalscore, allquestion
 
+    def keberadaanIndikator(self):
+
+        sc = ScoreDetil.objects.filter(quiz_taker = self.quiz_taker).values_list('specific_competency', flat=True)
+        nextInd = Specific_Competency.objects.filter(base_Competency=self.question.specific_Competency.base_Competency.pk).exclude(pk__in=sc)
+        nextInd = nextInd.filter(roll_out = 1)
+        if nextInd.exists():
+            nextInd = nextInd.order_by('order').first()
+
+        return nextInd
+
+
     def menghitungIndikator(self):
+        # indikatorexist = Base_Competency.objects.filter(pk=self.question.specific_Competency.base_Competency.pk)
+        # indikator_yang_belum = self.keberadaanIndikator()
+        # ordernext = indikator_yang_belum.order
+
+        sc = ScoreDetil.objects.filter(quiz_taker = self.quiz_taker).values_list('specific_competency', flat=True)
+        nextInd = Specific_Competency.objects.filter(base_Competency=self.question.specific_Competency.base_Competency.pk,roll_out = 1).exclude(pk__in=sc)
+        if nextInd.exists():
+            nextInd = nextInd.order_by('order').first()
+            ordernext = nextInd.order
+        else :
+            ordernext = 0
+
+        indikatorexist = Base_Competency.objects.filter(pk=self.question.specific_Competency.base_Competency.pk,
+                                                        k_dasar__order=ordernext)
+
+        return indikatorexist, ordernext
+
+
+    def menghitungIndikator2(self):
         indikatornow = self.question.specific_Competency.order
         indikatornext = int(indikatornow) + 1
         ordernext = int(indikatornext)
