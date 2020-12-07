@@ -68,7 +68,35 @@ class PemilihanKemampuan:
         self.quiz = quiz
         self.student = student
 
-    def soalKemampuan(self,Hasil):
+    def soalKemampuan(self, Hasil):
+        satuindikator = self.student.user.get_unanswered_questions(self.quiz)
+        # verylow
+        if Hasil < -0.5:
+            satuindikator = satuindikator.filter(level__lte=0)
+            var = "verylow"
+        # Low
+        elif Hasil > -1 and Hasil < 0.5:
+            satuindikator = satuindikator.filter(level__lte=0)
+            var = "low"
+
+        # Averange
+        elif Hasil > 0 and Hasil < 1.5:
+            satuindikator = satuindikator.filter(level__lte=2, level__gte=-1)
+            var = "Averange"
+
+        # good
+        elif Hasil > 0.5 and Hasil < 2:
+            satuindikator = satuindikator.filter(level__gte=1)
+            var = "good"
+
+        # excellent
+        elif Hasil > 1.5:
+            satuindikator = satuindikator.filter(level__gte=1)
+            var = "excelent"
+
+        return satuindikator, var
+
+    def soalKemampuan2(self,Hasil):
         satuindikator = self.student.user.get_unanswered_questions(self.quiz)
         # verylow
         if Hasil < -0.5:
