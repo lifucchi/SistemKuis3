@@ -60,22 +60,33 @@ input[type=radio]:checked + label:before{
 
 {% block content %}
 {% if question %}
-<div class="content ">
-    <div class="blocktext" style="text-align: center" >
-  <!-- <div class="progress mb-3">
-    <div class="progress-bar" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progress }}%"></div>
-  </div> -->
-  <!-- <h2><span class="badge badge-secondary">{{ answered_questions|add:"1" }}</span></h2> -->
-
-  <!-- <h2 class="mb-3">{{ quiz.name }}</h2> -->
-  <p class="lead"  >{{ answered_questions|add:"1" }} . {{ question.label }}</p>
+<!-- <div class="content ">
+    <div class="blocktext" style="text-align: center"  >
+  <h4  style="color:black"  >{{ answered_questions|add:"1" }} . {{ question.label }}</h4>
   <form  method="post" novalidate>
     {% csrf_token %}
     {{ form|crispy }}
-    <button  onclick="return confirm('Menuju ke soal selanjutnya?')" type="submit" class="btn btn-primary" >Selanjutnya →</button>
+    <button  onclick="return confirm('Menuju ke soal selanjutnya?')" type="submit" class="btn btn-coklat" >Selanjutnya →</button>
   </form>
 
 </div>
+</div> -->
+
+<div class="card border border-primary">
+  <div class="card-body">
+    <div class="content ">
+        <div class="blocktext" style="text-align: center"  >
+      <h4  style="color:black"  >{{ answered_questions|add:"1" }} . {{ question.label }}</h4>
+      <form  method="post" novalidate>
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button  onclick="return confirm('Menuju ke soal selanjutnya?')" type="submit" class="btn btn-coklat" >Selanjutnya →</button>
+      </form>
+
+    </div>
+    </div>
+  </div>
+
 </div>
 
 {% endif %}

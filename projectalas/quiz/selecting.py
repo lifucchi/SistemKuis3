@@ -15,6 +15,7 @@ class Penentuan:
         nextIndikator = get_object_or_404(Specific_Competency, order=ordernext, base_Competency_id=indikatorexist)
         return nextIndikator
 
+
 class Menghitung:
     def __init__(self ,quiz_taker, quiz, question):
         self.question = question

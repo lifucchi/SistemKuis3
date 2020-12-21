@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Kelas</title>
+    <title>SistemKuis</title>
     <!-- <meta name="description" content="Ela Admin - HTML5 Admin Template"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -35,17 +35,66 @@
 
    <style>
 
+
+   .btn-coklat {
+     color: #FFFFFF;
+     background-color: #634832;
+     border-color: #130269;
+   }
+
+   .btn-coklat:hover,
+   .btn-coklat:focus,
+   .btn-coklat:active,
+   .btn-coklat.active,
+   .open .dropdown-toggle.btn-coklat {
+     color: #FFFFFF;
+     background-color: #38220f;
+     border-color: #130269;
+   }
+
+   .btn-coklat:active,
+   .btn-coklat.active,
+   .open .dropdown-toggle.btn-coklat {
+     background-image: none;
+   }
+
+   .btn-coklat.disabled,
+   .btn-coklat[disabled],
+   fieldset[disabled] .btn-coklat,
+   .btn-coklat.disabled:hover,
+   .btn-coklat[disabled]:hover,
+   fieldset[disabled] .btn-coklat:hover,
+   .btn-coklat.disabled:focus,
+   .btn-coklat[disabled]:focus,
+   fieldset[disabled] .btn-coklat:focus,
+   .btn-coklat.disabled:active,
+   .btn-coklat[disabled]:active,
+   fieldset[disabled] .btn-coklat:active,
+   .btn-coklat.disabled.active,
+   .btn-coklat[disabled].active,
+   fieldset[disabled] .btn-coklat.active {
+     background-color: #634832;
+     border-color: #130269;
+   }
+
+   .btn-coklat .badge {
+     color: #634832;
+     background-color: #FFFFFF;
+   }
+
+
+
     </style>
 </head>
 
-<body class="open">
+<body style="background-color:#ece0d1;">
     <!-- Left Panel -->
-    <aside id="left-panel" class="left-panel">
-        <nav class="navbar navbar-expand-sm navbar-default">
+    <aside id="left-panel" class="left-panel" style="background-color:#dbc1ac;" >
+        <nav class="navbar navbar-expand-sm navbar-default" style="background-color:#dbc1ac;">
             <div id="main-menu" class="main-menu collapse navbar-collapse">
                 <ul class="nav navbar-nav">
                     <li class="">
-                        <a href=" {% url 'subjects'%} "><i class="menu-icon fa fa-laptop"></i>Mata Pelajaran </a>
+                        <a href=" {% url 'subjects'%} " style="color:black"><i style="color:black" class="menu-icon fa fa-laptop"></i>Mata Pelajaran </a>
                     </li>
 
                     <li>
@@ -57,12 +106,12 @@
     </aside>
     <!-- /#left-panel -->
     <!-- Right Panel -->
-    <div id="right-panel" class="right-panel">
+    <div id="right-panel" class="right-panel" style="background-color:#ece0d1;">
         <!-- Header-->
-        <header id="header" class="header">
-            <div class="top-left">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="">SistemKuis</a>
+        <header id="header" class="header" style="background-color:#634832;">
+            <div class="top-left" >
+                <div class="navbar-header" style="background-color:#634832;">
+                    <b><h2 class="navbar-brand" style="color:#fff">SistemKuis</h2></b>
                     <!-- <a class="navbar-brand" href="">  SistemKuis</a> -->
                     <a id="menuToggle" class="menutoggle"><i class="fa fa-bars"></i></a>
 
@@ -80,7 +129,7 @@
 
             <!-- </div> -->
 
-            <div class="top-right">
+            <div class="top-right" style="background-color:#634832;" >
                 <div class="header-menu">
                     <div class="header-left">
                         <!-- <button class="search-trigger"><i class="fa fa-search"></i></button> -->
@@ -113,11 +162,10 @@
                             </div>
                         </div> -->
 
-                        <div class="user-area dropdown float-right">
+                        <div class="user-area dropdown float-right" >
                           {% if user.is_authenticated %}
 
-
-                            <a href="#" class="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <a href="#" class="dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color:#fff">
                                 <!-- <img class="user-avatar rounded-circle" src="images/admin.jpg" alt="User Avatar"> -->
                                 {{ user.first_name }} {{ user.last_name }}
                                 <i class="fa fa- user"></i><span class="ti-angle-down"></span>
@@ -125,11 +173,11 @@
                             </a>
 
                             <div class="user-menu dropdown-menu">
-                                <a class="nav-link" href="#"><i class="fa fa- user"></i>{{ user.username }}</a>
+                                <a style="color:black" class="nav-link" href="#"><i class="fa fa-user"></i>{{ user.username }}</a>
 
-                                <a class="nav-link" href="#"><i class="fa fa -cog"></i>Kelas</a>
+                                <a style="color:black" class="nav-link" href="#"><i class="fa fa-cog"></i>Kelas {{ user.classes }}</a>
 
-                                <a class="nav-link" href="{% url 'logout'%}"><i class="fa fa-power -off"></i>Logout</a>
+                                <a style="color:black" class="nav-link" href="{% url 'logout'%}"><i class="fa fa-power-off"></i>Logout</a>
                             </div>
                         </div>
                         {% else %}
@@ -147,32 +195,7 @@
         <div class="content">
           {% block content %} {% endblock %}
 
-            <!-- Animated -->
-            <!-- <div class="animated fadeIn"> -->
-                <!-- Widgets  -->
-
-                <!-- /Widgets -->
-                <!--  Traffic  -->
-
-                <!--  /Traffic -->
                 <div class="clearfix"></div>
-                <!-- Orders -->
-
-                <!-- /.orders -->
-                <!-- To Do and Live Chat -->
-
-                <!-- /To Do and Live Chat -->
-                <!-- Calender Chart Weather  -->
-
-                <!-- /Calender Chart Weather -->
-                <!-- Modal - Calendar - Add New Event -->
-
-                <!-- /#event-modal -->
-                <!-- Modal - Calendar - Add Category -->
-
-            <!-- /#add-category -->
-            <!-- </div> -->
-            <!-- .animated -->
         </div>
         <!-- /.content -->
         <div class="clearfix"></div>

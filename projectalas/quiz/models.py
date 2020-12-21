@@ -11,14 +11,14 @@ class Subject(models.Model):
     name = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     class Meta:
         verbose_name = 'Mata Pelajaran'
         verbose_name_plural = "Mata Pelajaran"
 
     def natural_key(self):
-        return self.name
+        return str(self.name)
 
 
 class Core_Competency(models.Model):
@@ -33,10 +33,10 @@ class Core_Competency(models.Model):
 
 
     def __str__(self):
-        return self.classes
+        return str(self.classes)
 
     def natural_key(self):
-        return self.classes
+        return str(self.classes)
 
 class Topic(models.Model):
     name = models.CharField(max_length=400)
@@ -47,27 +47,28 @@ class Topic(models.Model):
         verbose_name_plural = "Topik"
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     def natural_key(self):
-        return self.name
+        return str(self.name)
 
 class Base_Competency(models.Model):
     core_Competency = models.ForeignKey(Core_Competency, on_delete=models.CASCADE, related_name="k_inti")
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name="topictopic")
-    roll_out = models.BooleanField(default=False)
     name = models.CharField(max_length=400)
-    ability = models.CharField(max_length=100, blank = True)
+    desc = models.CharField(max_length=50, blank = True)
+    roll_out = models.BooleanField(default=False)
+
 
     class Meta:
         verbose_name = "Kompetensi Dasar"
         verbose_name_plural = "Kompetensi Dasar"
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     def natural_key(self):
-        return self.name
+        return str(elf.name)
 
 class Specific_Competency(models.Model):
     base_Competency = models.ForeignKey(Base_Competency, on_delete=models.CASCADE , related_name="k_dasar")
@@ -83,27 +84,27 @@ class Specific_Competency(models.Model):
         verbose_name_plural = "Indikator"
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     def natural_key(self):
-        return self.name
+        return str(self.name)
 
 class Question(models.Model):
     specific_Competency = models.ForeignKey(Specific_Competency, on_delete=models.CASCADE, related_name="indikator")
-    label = models.CharField(max_length=200)
+    label = models.CharField(max_length=400)
     level = models.FloatField(default=0)
     discrimination = models.FloatField(default=0)
     code = models.CharField(max_length=50, blank=True)
 
     def __str__(self):
-        return self.label
+        return str(self.label)
 
     class Meta:
         verbose_name = "Pertanyaan"
         verbose_name_plural = "Pertanyaan"
 
     def natural_key(self):
-        return self.name
+        return str(self.name)
 
 class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="choices")
@@ -111,14 +112,14 @@ class Answer(models.Model):
     is_correct = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.label
+        return str(self.label)
 
     class Meta:
         verbose_name = "Jawaban Pertanyaan"
         verbose_name_plural = "Jawaban Pertanyaan"
 
     def natural_key(self):
-        return self.label
+        return str(self.label)
 
 class QuizTaker(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE , related_name="murid")
@@ -129,7 +130,7 @@ class QuizTaker(models.Model):
     recommendation = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
-        return self.user.username
+        return str(self.user.username)
 
     class Meta:
         verbose_name = "Pengambil Kuis"
@@ -137,25 +138,22 @@ class QuizTaker(models.Model):
 
 
     def natural_key(self):
-        return self.user.username
+        return str(self.user.username)
 
 class ScoreDetil(models.Model):
     specific_competency = models.ForeignKey(Specific_Competency, on_delete=models.CASCADE , related_name="indikators")
     quiz_taker = models.ForeignKey(QuizTaker, on_delete=models.CASCADE , related_name="quiz_taker")
-    desc = models.CharField(max_length=200)
-    # question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="choices")
-    # label = models.CharField(max_length=200)
-    # is_correct = models.BooleanField(default=False)
+    desc = models.FloatField(default=0)
 
     def __str__(self):
-        return self.desc
+        return str(self.desc)
 
     class Meta:
         verbose_name = "Skor per Indikator"
         verbose_name_plural = "Skor per Indikator"
 
     def natural_key(self):
-        return self.desc
+        return str(self.desc)
 
 
 class UsersAnswer(models.Model):
@@ -170,10 +168,7 @@ class UsersAnswer(models.Model):
         verbose_name_plural = "Jawaban Pengguna"
 
     def __str__(self):
-        return self.question.label
-
-    def natural_key(self):
-        return self.question.label
+        return str(self.answer.question.label)
 
 
 class QuizLog(models.Model):
@@ -190,10 +185,10 @@ class QuizLog(models.Model):
 
 
     def __str__(self):
-        return self.QuizLog.label
-
-    def natural_key(self):
-        return self.QuizLog.label
+        return str(self.id)
+    #
+    # def natural_key(self):
+    #     return self.QuizLog.quiztaker
 
 
 @receiver(pre_save, sender=Topic)

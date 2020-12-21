@@ -95,32 +95,32 @@ WSGI_APPLICATION = 'projectalas.wsgi.application'
 #     }
 # }
 
-#kalau mau database sama dengan heroku
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#     }
-# }
-# DATABASES['default'] = dj_database_url.config(default='postgres://dorqarjzusazsc:59bb9630be5812211eb7d0fe7d30a1b960ffb31f2ea7d78782d5c3779e02dd52@ec2-35-173-94-156.compute-1.amazonaws.com:5432/dfhag4k9sd3953')
-# db_from_env = dj_database_url.config(conn_max_age=600)
-# DATABASES['default'].update(db_from_env)
+# kalau mau database sama dengan heroku
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+    }
+}
+DATABASES['default'] = dj_database_url.config(default='postgres://dorqarjzusazsc:59bb9630be5812211eb7d0fe7d30a1b960ffb31f2ea7d78782d5c3779e02dd52@ec2-35-173-94-156.compute-1.amazonaws.com:5432/dfhag4k9sd3953')
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(db_from_env)
 
 
 # database localhost
-DATABASES={
-	'default':{
-	'ENGINE':'django.db.backends.mysql',
-	'NAME':'ta_quiz3',
-	'USER':'root',
-	'PASSWORD':'root',
-	'HOST':'localhost',
-    'PORT':'3306',
-    'OPTIONS': {
-        'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-        'charset': 'utf8mb4',
-    }
-	}
-}
+# DATABASES={
+# 	'default':{
+# 	'ENGINE':'django.db.backends.mysql',
+# 	'NAME':'ta_quiz3',
+# 	'USER':'root',
+# 	'PASSWORD':'root',
+# 	'HOST':'localhost',
+#     'PORT':'3306',
+#     'OPTIONS': {
+#         'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#         'charset': 'utf8mb4',
+#     }
+# 	}
+# }
 
 #database cpanel
 # DATABASES = {

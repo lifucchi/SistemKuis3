@@ -72,7 +72,8 @@ class TopicList (LoginRequiredMixin,DetailView):
 
         if request.method == 'GET':
             answered_questions = student.quiz_answers.count()
-            answers = question.choices.all()
+            # answers = question.choices.all()
+            answers = question.choices.all().order_by('?')
             choose_answer_form = ChooseAnswerForm()
             choose_answer_form.fields['answer'].queryset = answers
 

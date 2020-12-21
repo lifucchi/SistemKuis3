@@ -370,7 +370,7 @@ p:focus {
 a, button {
   text-decoration: none;
   outline: none !important;
-  color: #878787;
+  color: black;
   -webkit-transition: all 0.25s ease;
   transition: all 0.25s ease; }
 
@@ -464,7 +464,8 @@ canvas {
     top: 0px;
     height: 37px;
     width: 10px;
-    background: #e8e9ef; }
+    #ganti
+    background: #fff; }
   .order-table:after {
     right: -1px; }
   .order-table:before {
@@ -564,7 +565,8 @@ canvas {
 /* Global Styles */
 /* Main Styles */
 aside.left-panel {
-  background: #fff;
+  #ganti 1
+  background: #2D2D2D;
   height: 100vh;
   padding: 0;
   vertical-align: top;
@@ -586,7 +588,8 @@ aside.left-panel {
   margin-left: 83px; }
 
 .navbar {
-  background: #fff;
+  #ganti2
+  background: #2D2D2D;
   border-radius: 0;
   border: none;
   display: inline-block;
