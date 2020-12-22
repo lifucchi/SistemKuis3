@@ -160,8 +160,10 @@ class UsersAnswer(models.Model):
     quiztaker = models.ForeignKey(QuizTaker, on_delete=models.CASCADE, related_name="quiz_answers")
     # question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='+')
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True, related_name='+')
-    timestamp = models.DateTimeField(auto_now_add=True)
+    startime = models.DateTimeField(auto_now_add=True)
+    endtime = models.DateTimeField(auto_now_add=True)
     grade = models.IntegerField(default=0)
+    nebak = models.BooleanField(default=False
 
     class Meta:
         verbose_name = "Jawaban Pengguna"

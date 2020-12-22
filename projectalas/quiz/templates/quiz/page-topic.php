@@ -4,11 +4,7 @@
 
 
       <div class="row">
-
         {% for bc in bcs %}
-
-
-
           <div class="col-lg-12">
             <div class="card">
                 <div class="card-header" style="background-color:#967259;">

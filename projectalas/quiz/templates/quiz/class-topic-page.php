@@ -21,7 +21,6 @@
                     <br>
                 </div>
 
-
                   {% endfor %}
           </div>
       </div>
