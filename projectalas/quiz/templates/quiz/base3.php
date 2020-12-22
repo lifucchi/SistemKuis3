@@ -175,12 +175,22 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.4/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-match-height@0.7.2/dist/jquery.matchHeight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous"></script>
     <script src="{% static 'assets/js/main.js'%}"></script>
 
 
     <script>
         jQuery(document).ready(function($) {
-
+            const open = moment().format("YYYY-MM-DD HH:mm:ss")
+            $("#starttimeformat").val(open)
+            setEndTime()
+            function setEndTime(){
+                const beforesend = moment().format("YYYY-MM-DD HH:mm:ss")
+                $("#endtimeformat").val(beforesend)
+                setTimeout(()=>{
+                    setEndTime()
+                },50)
+            }
         });
     </script>
 </body>

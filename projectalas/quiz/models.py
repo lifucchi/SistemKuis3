@@ -157,11 +157,15 @@ class ScoreDetil(models.Model):
 
 
 class UsersAnswer(models.Model):
+    id = models.IntegerField(primary_key=True)
     quiztaker = models.ForeignKey(QuizTaker, on_delete=models.CASCADE, related_name="quiz_answers")
     # question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='+')
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE, null=True, related_name='+')
     timestamp = models.DateTimeField(auto_now_add=True)
     grade = models.IntegerField(default=0)
+    starttime = models.DateTimeField()
+    endtime = models.DateTimeField()
+    nebak = models.BooleanField()
 
     class Meta:
         verbose_name = "Jawaban Pengguna"
