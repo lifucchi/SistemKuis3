@@ -85,10 +85,28 @@ class TopicList (LoginRequiredMixin,DetailView):
             return render(request, 'quiz/take_quiz_form.php', context)
 
         elif request.method == 'POST':
-            choose_answer_form = ChooseAnswerForm(request.POST)
+            verifikasi = request.POST.get('verifikasi', 0)
             menghitung = selecting.Menghitung(quiz_taker, quiz, question)
             penentuan = selecting.Penentuan()
             pertanyaan = selecting.PemilihanKemampuan(quiz, student)
+
+            if(verifikasi == 1 or verifikasi == "1"):
+                values = []
+                for key in list(request.POST.keys()):
+                    if (key == "verifikasi" or key == "csrfmiddlewaretoken"):
+                        continue
+                    UsersAnswer.objects.filter(id=key).update(nebak=request.POST[key])
+
+                Scorenya = menghitung.menghitungScoreKeseluruhan()
+                Scorenya = (round(Scorenya, 2))
+                QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
+                QuizTaker.objects.filter(pk=quiz_taker).update(date_finished=timezone.now())
+                                        # MASUKKAN NILAI DISINI
+                return redirect(reverse('score', kwargs={'pk': quiz_taker,
+                                                            'bc': question.specific_Competency.base_Competency.pk}))
+
+            choose_answer_form = ChooseAnswerForm(request.POST)
+
 
             # JIKA MENGISI JAWABAN
             if choose_answer_form.is_valid():
@@ -101,6 +119,8 @@ class TopicList (LoginRequiredMixin,DetailView):
                 aresponse = UsersAnswer(
                     quiztaker=student,
                     # question=question,
+                    endtime = request.POST['endtime'],
+                    starttime=request.POST['starttime'],
                     answer=answer,
                     grade=grade,
                 )
@@ -166,6 +186,23 @@ class TopicList (LoginRequiredMixin,DetailView):
                             return render(request, 'quiz/quiz_result2.php', context)
                     else:
                         # Hitung score
+                        all_answered_questions = UsersAnswer.objects.filter(quiztaker=student, nebak__isnull=True)
+                        if len(all_answered_questions) != 0:
+                            squestion = []
+                            for useranswer in all_answered_questions:
+                                question = useranswer.answer.question
+                                choices = question.choices.all().order_by("?")
+                                squestion.append({
+                                    'question': question,
+                                    'choices' : choices,
+                                    'answer'  : useranswer
+                                })
+
+                            return render(request, 'quiz/verifikasijawaban.php', {
+                                'useranswer' : squestion
+                            })
+
+
                         Scorenya = menghitung.menghitungScoreKeseluruhan()
                         Scorenya = (round(Scorenya, 2))
 
@@ -238,6 +275,22 @@ class TopicList (LoginRequiredMixin,DetailView):
                                 return render(request, 'quiz/quiz_result2.php', context)
                         else:
                             # Hitung score
+                            all_answered_questions = UsersAnswer.objects.filter(quiztaker=student, nebak__isnull=True)
+                            if len(all_answered_questions) != 0:
+                                squestion = []
+                                for useranswer in all_answered_questions:
+                                    question = useranswer.answer.question
+                                    choices = question.choices.all().order_by("?")
+                                    squestion.append({
+                                        'question': question,
+                                        'choices' : choices,
+                                        'answer'  : useranswer
+                                    })
+
+                                return render(request, 'quiz/verifikasijawaban.php', {
+                                    'useranswer' : squestion
+                                })
+
                             Scorenya = menghitung.menghitungScoreKeseluruhan()
                             Scorenya = (round(Scorenya, 2))
                             QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
@@ -255,6 +308,8 @@ class TopicList (LoginRequiredMixin,DetailView):
                 aresponse = UsersAnswer(
                     quiztaker=student,
                     # question=question,
+                    endtime = request.POST['endtime'],
+                    starttime=request.POST['starttime'],
                     answer=None,
                     grade=grade,
                 )
@@ -320,6 +375,22 @@ class TopicList (LoginRequiredMixin,DetailView):
                             return render(request, 'quiz/quiz_result2.php', context)
                     else:
                         # Hitung score
+                        all_answered_questions = UsersAnswer.objects.filter(quiztaker=student, nebak__isnull=True)
+                        if len(all_answered_questions) != 0:
+                            squestion = []
+                            for useranswer in all_answered_questions:
+                                question = useranswer.answer.question
+                                choices = question.choices.all().order_by("?")
+                                squestion.append({
+                                    'question': question,
+                                    'choices' : choices,
+                                    'answer'  : useranswer
+                                })
+
+                            return render(request, 'quiz/verifikasijawaban.php', {
+                                'useranswer' : squestion
+                            })
+
                         Scorenya = menghitung.menghitungScoreKeseluruhan()
                         Scorenya = (round(Scorenya, 2))
                         QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
@@ -396,6 +467,21 @@ class TopicList (LoginRequiredMixin,DetailView):
                                 return render(request, 'quiz/quiz_result2.php', context)
                         else:
                             # Hitung score
+                            all_answered_questions = UsersAnswer.objects.filter(quiztaker=student, nebak__isnull=True)
+                            if len(all_answered_questions) != 0:
+                                squestion = []
+                                for useranswer in all_answered_questions:
+                                    question = useranswer.answer.question
+                                    choices = question.choices.all().order_by("?")
+                                    squestion.append({
+                                        'question': question,
+                                        'choices' : choices,
+                                        'answer'  : useranswer
+                                    })
+
+                                return render(request, 'quiz/verifikasijawaban.php', {
+                                    'useranswer' : squestion
+                                })
                             Scorenya = menghitung.menghitungScoreKeseluruhan()
                             Scorenya = (round(Scorenya, 2))
                             QuizTaker.objects.filter(pk=quiz_taker).update(score=Scorenya)
