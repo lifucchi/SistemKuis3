@@ -25,5 +25,10 @@
                           </div>
       </div>
         {% endfor %}
+        <div class="card-body text-center" style="background-color:#dbc1ac;"   >
+
+        <button   onclick="location.href = '{% url 'subjects' %}';" type="button" class="btn btn-coklat center"  ><i class="fa fa-star"></i>&nbsp;Beranda</button>
+      </div>
+
 
 {% endblock %}
