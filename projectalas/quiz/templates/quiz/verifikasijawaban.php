@@ -73,7 +73,7 @@ input[type=radio]:checked + label:before{
                                 {% if choice.id == a.answer.answer.id %}
                                     <li style="color:green">
                                         {{ choice.label }}
-                                            [ Jawaban Anda ]
+                                            [ Jawaban Kamu ]
                                     </li>
                                 {% else %}
                                     <li>
@@ -84,15 +84,16 @@ input[type=radio]:checked + label:before{
                         </ul>
                     </div>
                     <div style="flex-basis:50%; border-left:1px solid black; padding-left:10px;">
-                        <h4 style="color:black">Apakah Anda menjawab pertanyaan ini dengan menebak (ngawur / ngasal / nyontek)? Isilah dengan jujur!</h4>
-                        <input required type="radio" id="yes-{{ a.question.id }}" name="{{ a.answer.id }}" value="1">
-                        <label for="yes-{{ a.question.id }}">Ya</label><br>
-                        <input required type="radio" id="no-{{ a.question.id }}" name="{{ a.answer.id }}" value="0">
-                        <label for="no-{{ a.question.id }}">Tidak</label><br>
+                        <h4 style="color:black">Apakah Kamu menjawab pertanyaan di samping dengan menebak (ngasal / nyontek)? Isilah dengan jujur!</h4>
+                        <input required oninvalid="this.setCustomValidity('Mohon pilih ya / tidak')" oninput="this.setCustomValidity('')" type="radio" id="yes-{{ a.question.id }}" name="{{ a.answer.id }}" value="1">
+                        <label for="yes-{{ a.question.id }}">Ya, saya menjawab pertanyaan disamping dengan menebak</label><br>
+                        <input required oninvalid="this.setCustomValidity('Mohon pilih ya / tidak')" oninput="this.setCustomValidity('')"  type="radio" id="no-{{ a.question.id }}" name="{{ a.answer.id }}" value="0">
+                        <label for="no-{{ a.question.id }}">Tidak, sudah saya hitung</label><br>
                     </div>
                 </div>
             </div>
         </div>
+        <br>
     {% endfor %}
 
 <button  type="submit" class="btn btn-coklat" >Selanjutnya →</button>
