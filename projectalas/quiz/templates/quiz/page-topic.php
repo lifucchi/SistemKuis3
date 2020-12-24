@@ -60,6 +60,8 @@
                             4.Jumlah butir soal yang diberikan sesuai dengan kemampuan atau maksimal sebanyak 6 soal pada setiap indikator
                             <br>
                             5.Dimohon untuk tidak me-refresh halaman disaat mengerjakan kuis
+                            <br>
+                            6.Dimohon untuk menjawab semua pertanyaan
                       </p>
                   </div>
                   <div class="modal-footer">
