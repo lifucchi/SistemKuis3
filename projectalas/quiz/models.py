@@ -165,6 +165,8 @@ class UsersAnswer(models.Model):
     endtime = models.DateTimeField(null=True)
     nebak = models.BooleanField(null=True)
 
+    # REQUIRED_FIELDS = ['answer']
+
 
     class Meta:
         verbose_name = "Jawaban Pengguna"

@@ -15,7 +15,7 @@ class UserAdmin(UserAdmin):
     list_display = ('username', 'first_name','last_name', 'email', 'is_active')
     list_filter = ('username', 'first_name','last_name', 'email', 'is_active')
     fieldsets = (
-        (None, {'fields': ('first_name', 'last_name','username', 'email', 'password')}),
+        (None, {'fields': ('first_name', 'last_name','username', 'email','classes','sekolah' ,'password')}),
         ('Permissions', {'fields': ('is_staff', 'is_active')})
     )
     search_fields = ('username',)

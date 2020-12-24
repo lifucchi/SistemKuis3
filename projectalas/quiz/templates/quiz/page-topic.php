@@ -58,6 +58,8 @@
                             3.Periksa dan bacalah soal-soal dengan saksama sebelum Anda menjawabnya.
                             <br>
                             4.Jumlah butir soal yang diberikan sesuai dengan kemampuan atau maksimal sebanyak 6 soal pada setiap indikator
+                            <br>
+                            5.Dimohon untuk tidak me-refresh halaman disaat mengerjakan kuis
                       </p>
                   </div>
                   <div class="modal-footer">

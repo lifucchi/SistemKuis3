@@ -15,8 +15,16 @@ class ChooseAnswerForm(forms.Form):
     answer = forms.ModelChoiceField(
         queryset=Answer.objects.all(),
         widget=forms.RadioSelect,
-        empty_label=None
+        empty_label=None,
+        blank=False,
     )
+
+    # def clean(self):
+    #     cleaned_data = super(ChooseAnswerForm, self).clean()
+    #     t = self.cleaned_data.get('answer')
+    #     if t == '':
+    #         raise forms.ValidationError('tolong diisi')
+    #     return cleaned_data
     #
     # class Meta:
     #     model = UsersAnswer
