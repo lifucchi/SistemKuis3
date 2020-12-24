@@ -182,6 +182,8 @@
                     setEndTime()
                 },50)
             }
+
+            $(".form-check-input").prop('required',true);
         });
     </script>
 </body>

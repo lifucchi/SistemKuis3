@@ -77,7 +77,7 @@ input[type=radio]:checked + label:before{
     <div class="content ">
         <div class="blocktext" style="text-align: center"  >
       <h4  style="color:black"  >{{ answered_questions|add:"1" }} . {{ question.label }}</h4>
-      <form  method="post" novalidate>
+      <form  method="post">
         <input type="hidden" name="starttime" id="starttimeformat">
         <input type="hidden" name="endtime" id="endtimeformat">
         {% csrf_token %}
